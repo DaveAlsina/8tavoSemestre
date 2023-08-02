@@ -49,6 +49,9 @@ class Vector:
         elif det > 0:
             return 1
         return 0 
+
+
+
     
     def walk(self, v2: 'Vector', v3: 'Vector', plotting = False) -> int:
 
@@ -79,6 +82,61 @@ class Vector:
             return 1
         return 0
 
+    @staticmethod
+    def direction(vector1: 'Vector', vector2: 'Vector', vector3: 'Vector') -> int:
+
+        det = np.linalg.det(np.column_stack([(vector3 - vector1).vector, (vector2 - vector1).vector]))
+
+        if det < 0:
+            return -1
+        elif det > 0:
+            return 1
+        return 0
+
+    @staticmethod
+    def on_segment(v1: 'Vector', v2: 'Vector', v3: 'Vector') -> bool:
+            
+            """
+                Checks if v3 is on the segment v1v2
+            """
+            inx = min(v1.vector[0][0], v2.vector[0][0]) <= v3.vector[0][0] <= max(v1.vector[0][0], v2.vector[0][0]) 
+            iny = min(v1.vector[1][0], v2.vector[1][0]) <= v3.vector[1][0] <= max(v1.vector[1][0], v2.vector[1][0])
+
+            if (inx and iny):
+                return True
+            return False
+
+    @staticmethod
+    def segments_intersect(v1: 'Vector', v2: 'Vector', v3: 'Vector', v4: 'Vector', plotting = False) -> bool:
+
+        """
+            
+        """
+
+        dir1 = Vector.direction(v3, v4, v1)
+        dir2 = Vector.direction(v3, v4, v2)
+        dir3 = Vector.direction(v1, v2, v3)
+        dir4 = Vector.direction(v1, v2, v4)
+
+        #well behaved case
+        if (dir1*dir2 < 0) and (dir3*dir4 < 0):
+            return True
+    
+        #collinear case
+        elif (dir1 == 0) and (Vector.on_segment(v3, v4, v1)):
+            return True
+
+        elif (dir2 == 0) and (Vector.on_segment(v3, v4, v2)):
+            return True
+
+        elif (dir3 == 0) and (Vector.on_segment(v1, v2, v3)):
+            return True
+
+        elif (dir4 == 0) and (Vector.on_segment(v1, v2, v4)):
+            return True
+        
+        else:
+            return False
     
     #========================================
     #               Plotting
