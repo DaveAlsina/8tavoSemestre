@@ -1,0 +1,117 @@
+<mxfile host="Electron" modified="2023-08-08T19:51:53.835Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.5 Chrome/114.0.5735.243 Electron/25.3.1 Safari/537.36" etag="6vD9tInGzcgLmZOZF0I7" version="21.6.5" type="device">
+  <diagram name="Page-1" id="e7e014a7-5840-1c2e-5031-d8a46d1fe8dd">
+    <mxGraphModel dx="735" dy="492" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=block;endFill=0;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.375;exitY=0.994;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=0;startArrow=diamond;startFill=0;exitPerimeter=0;dashed=1;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="544.99" y="470.00000000000006" as="sourcePoint" />
+            <mxPoint x="514.99" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=blockThin;endFill=1;startArrow=diamond;startFill=1;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-2" target="C3K-RIGM4XM7cB46B6Fr-20">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="550" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="530" y="540" />
+              <mxPoint x="680" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=block;endFill=1;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-2" target="C3K-RIGM4XM7cB46B6Fr-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="540" />
+              <mxPoint x="420" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-2" value="Suscriptor" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="410" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-4" value="Suscriptor heredado de Usuario" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="530" y="340" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-5" value="Python deja heredar de múltiples clases" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="680" y="150" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=block;endFill=0;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="330" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="685" y="380" />
+              <mxPoint x="530" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startArrow=diamond;startFill=1;endArrow=block;endFill=1;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="820" y="440.38461538461536" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-6" value="Entrenador" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="625" y="410" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;endArrow=block;endFill=0;" edge="1" parent="1" source="C3K-RIGM4XM7cB46B6Fr-7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="330" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="390" y="380" />
+              <mxPoint x="530" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-7" value="Admin" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="410" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-11" value="Medio de pago" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="580" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-14" value="Un suscriptor tiene un medio de pago&lt;br&gt;&lt;i&gt;&lt;u&gt;(asociacion)&lt;/u&gt;&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="530" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-15" value="Un suscriptor necesita una suscripción&lt;br&gt;&lt;i&gt;&lt;u&gt;(dependencia)&lt;/u&gt;&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="590" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-16" value="Suscripción" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="660" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-20" value="Dispositivos" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="660" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-21" value="Un suscriptor puede tener varios Dispositivos&lt;br&gt;&lt;i&gt;&lt;u&gt;(Composición)&lt;/u&gt;&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="580" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-24" value="Usuario" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="150" width="140" height="180" as="geometry">
+            <mxRectangle x="460" y="150" width="80" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-25" value="Username: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="C3K-RIGM4XM7cB46B6Fr-24">
+          <mxGeometry y="30" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-28" value="Gender: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="C3K-RIGM4XM7cB46B6Fr-24">
+          <mxGeometry y="60" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="C3K-RIGM4XM7cB46B6Fr-24">
+          <mxGeometry y="90" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-27" value="logout ()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="C3K-RIGM4XM7cB46B6Fr-24">
+          <mxGeometry y="120" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-26" value="login ()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="C3K-RIGM4XM7cB46B6Fr-24">
+          <mxGeometry y="150" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C3K-RIGM4XM7cB46B6Fr-31" value="Programas" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="413" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
