@@ -34,7 +34,7 @@ class Vector:
     #              Operations
     #========================================
 
-    def simple_positioning(self, vector2: 'Vector', plotting = False) -> int:
+    def simple_positioning(self, vector2: 'Vector') -> int:
         """
             Output:
                 - 0, if vectors are colineal 
@@ -50,8 +50,10 @@ class Vector:
             return 1
         return 0 
 
+
+
     
-    def walk_turn(self, v2: 'Vector', v3: 'Vector', plotting = False) -> int:
+    def walk(self, v2: 'Vector', v3: 'Vector', plotting = False) -> int:
 
         """
             assumes there is a walk from self to v2 to v3, 
@@ -60,29 +62,24 @@ class Vector:
         
             Output:
                 - 0, if vectors are colineal 
-                - 1, if vector2 is rotated anticlockwise with respect to the current vector
-                - -1, if vector2 is rotated clockwise with respect to the current vector
+                - 1, if vector2 is rotated clockwise with respect to the current vector
+                - -1, if vector2 is rotated anticlockwise with respect to the current vector
         """
+
 
         vector1 = v2 - self
         vector2 = v3 - self
     
         det = np.linalg.det(np.column_stack([vector1.vector, vector2.vector]))
 
+        if plotting:
+            plt.legend(["v1", "v2", "v3"])
+            self.plot_many(self, v2, v3)
 
         if det < 0:
-            if plotting:
-                legend = ["clockwise"]
-                self.plot_walk(v2, v3, legend = legend)
-
             return -1
-
         elif det > 0:
-            if plotting:
-                legend = ["anti-clockwise"]
-                self.plot_walk(v2, v3, legend = legend)
             return 1
-
         return 0
 
     @staticmethod
@@ -164,35 +161,6 @@ class Vector:
         plt.ylim(-2*norm, 2*norm)
         plt.show()
 
-    def plot_walk(self, *vectors: 'Vector', legend = []):
-
-        """
-            Assumes there is a walk from self to the other vectors, 
-            and its order is given by the order of the arguments.
-
-            Plots the walk.
-        """
-
-        default_style = {"head_width": 0.1, "head_length": 0.1, "color": "g"}
-        
-        #the arrow from self to the second vector
-        plt.arrow(self.vector[0][0], self.vector[1][0], (vectors[0] - self).vector[0][0], (vectors[0] - self).vector[1][0], **default_style)
-
-        #now we plot the rest of the vectors
-        for i in range(1, len(vectors)):
-            plt.arrow(vectors[i-1].vector[0][0], vectors[i-1].vector[1][0], (vectors[i] - vectors[i-1]).vector[0][0], (vectors[i] - vectors[i-1]).vector[1][0], **default_style)
-        
-        #we set the limits of the plot
-        norm = max([np.linalg.norm(v.vector) for v in vectors])
-        plt.xlim(-1.1*norm, 1.1*norm)
-        plt.ylim(-1.1*norm, 1.1*norm)
-        plt.legend(legend)
-        plt.show()
-
-
-    #========================================
-    #               Overloading
-    #========================================
         
     def __add__(self, vector2: 'Vector') -> 'Vector':
         return Vector(self.vector + vector2.vector)
@@ -205,5 +173,4 @@ class Vector:
 
     def __str__(self):
         return f"{self.vector}"
-
 
