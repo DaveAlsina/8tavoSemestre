@@ -20,13 +20,20 @@ class SwissArmyKnifePlotting:
         plt.show()
     
     @staticmethod
-    def plot_many(*vectors: Vector, highlighted: list = [], with_arrows: bool = False):
+    def plot_many(*vectors: Vector,
+                   highlighted: list = [],
+                   with_arrows: bool = False,
+                   with_labels: bool = False):
 
-        for vector in vectors:
+        for i, vector in enumerate(vectors):
             if with_arrows:
                 plt.arrow(0, 0, vector.vector[0][0], vector.vector[1][0], head_width=0.1, head_length=0.1, color="g")
-            else:
+            else: 
                 plt.scatter(vector.vector[0][0], vector.vector[1][0], color="g")
+
+            if with_labels:
+                plt.text(vector.vector[0][0], vector.vector[1][0], f"v{i}")
+
 
         for vector in highlighted:
             plt.scatter(vector.vector[0][0], vector.vector[1][0], color="r")
