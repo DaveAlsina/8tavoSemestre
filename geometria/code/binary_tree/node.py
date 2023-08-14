@@ -1,4 +1,8 @@
-class Node():
+from typing import Union, List
+from pyparsing import abstractmethod
+from abc import ABC
+
+class Node(ABC):
 
     def __init__(self, value):
         self.value = value
@@ -10,23 +14,28 @@ class Node():
         return f"Node({self.value})"
 
     #classes inheriting from this class must implement these methods
+    @abstractmethod
     def __gt__(self, other):
         raise NotImplementedError
     
+    @abstractmethod
     def __lt__(self, other):
         raise NotImplementedError
     
+    @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError
     
+    @abstractmethod
     def __ge__(self, other):
         raise NotImplementedError
     
+    @abstractmethod
     def __le__(self, other):
         raise NotImplementedError
     
     @staticmethod
-    def cast_to_nodes(values: list) -> list:
+    def cast_to_nodes(values: List) -> List['Node']:
         raise NotImplementedError
 
 
@@ -58,7 +67,7 @@ class Node1D(Node):
         return self.value <= other.value
 
     @staticmethod
-    def cast_to_nodes(values: list) -> list:
+    def cast_to_nodes(values: List[float]) -> List['Node1D']:
         return [Node1D(v) for v in values]
 
 class Node2D(Node):
@@ -102,5 +111,5 @@ class Node2D(Node):
             return (self < other) or (self == other)
     
         @staticmethod
-        def cast_to_nodes(values: list) -> list:
+        def cast_to_nodes(values: List[float]) -> List['Node2D']:
             return [Node2D(v) for v in values]
