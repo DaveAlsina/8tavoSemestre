@@ -20,6 +20,12 @@ class Segment():
         if self.start > self.end:
             self.start, self.end = self.end, self.start
 
+    def is_start_point(self, vector: Vector) -> bool:
+        """
+            Checks if vector is the start point of the segment.
+        """
+        return self.start == vector
+
     def get_midpoint(self) -> Vector:
         """
             Calculates the midpoint of the segment.
