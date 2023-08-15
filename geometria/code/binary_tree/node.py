@@ -1,12 +1,17 @@
+#standard imports
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from typing import Union, List
 from pyparsing import abstractmethod
 from abc import ABC
+
+#custom imports
+from base import Vector, Segment
 
 class Node(ABC):
 
     def __init__(self, value):
         self.value = value
-        self.parent = None
         self.left = None
         self.right = None
 
@@ -43,10 +48,8 @@ class Node1D(Node):
 
     def __init__(self, value: int):
         self.value = value
-        self.parent = None
         self.left = None
         self.right = None
-
 
     #=====================================
     #       order comparison methods
@@ -70,6 +73,7 @@ class Node1D(Node):
     def cast_to_nodes(values: List[float]) -> List['Node1D']:
         return [Node1D(v) for v in values]
 
+
 class Node2D(Node):
     
         def __init__(self, value: tuple):
@@ -81,7 +85,6 @@ class Node2D(Node):
             """
 
             self.value = value
-            self.parent = None
             self.left = None
             self.right = None
     
@@ -92,14 +95,14 @@ class Node2D(Node):
             if self.value[1] > other.value[1]:
                 return True
             elif self.value[1] == other.value[1]:
-                return self.value[0] > other.value[0]
+                return self.value[0] < other.value[0]
     
         def __lt__(self, other: 'Node2D'):
             
             if self.value[1] > other.value[1]:
                 return True
             elif self.value[1] == other.value[1]:
-                return self.value[0] < other.value[0]
+                return self.value[0] > other.value[0]
     
         def __eq__(self, other: 'Node2D'):
             return self.value == other.value
@@ -113,3 +116,4 @@ class Node2D(Node):
         @staticmethod
         def cast_to_nodes(values: List[float]) -> List['Node2D']:
             return [Node2D(v) for v in values]
+

@@ -10,13 +10,19 @@ class Segment():
     def __init__(self, v0: Vector, v1: Vector) -> None:
         """
             This class is used to represent a segment in 2D space.
-            v0 and v1 are the vertices of the segment.
+            v0 and v1 are the vertices of the segment. Starting from v0, and ending in v1.
         """
         self.v0 = v0
         self.v1 = v1
 
     def __repr__(self) -> str:
         return f"Segment({self.v0}, {self.v1})"
+
+    def get_midpoint(self) -> Vector:
+        """
+            Calculates the midpoint of the segment.
+        """
+        return (self.v0 + self.v1)/2
 
     def calcutale_slope(self) -> float:
         """

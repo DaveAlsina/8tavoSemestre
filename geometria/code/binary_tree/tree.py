@@ -8,6 +8,12 @@ class Tree():
                  sorted: bool = False, 
                  dimension: int = 1):
 
+        """
+            Builds a tree from a list of values.
+            If sorted is True, the list must be ordered. And the code the tree comes from the Tree.build_from_sorted_list method.
+            So it won't be necessary to build the tree again.
+        """
+
         if dimension == 1:
             #if the values are not nodes, cast them to nodes
             if not isinstance(values[0], Node1D):
@@ -26,7 +32,9 @@ class Tree():
 
         self.sorted = sorted
         self.dimension = dimension
-        self.build()
+
+        if not sorted:
+            self.build()
 
     def build(self) -> None:
         """
@@ -55,7 +63,7 @@ class Tree():
 
         return ordered_values
     
-    def build_from_sorted_list(self, sorted_list: list)-> 'Tree':
+    def build_from_sorted_list(self, sorted_list: List[Union[Node1D, Node2D]])-> 'Tree':
 
         """
             Inserts the values from an ordered list.
@@ -78,15 +86,7 @@ class Tree():
         if len(sorted_list) == 0:
             return None
         
-        elif len(sorted_list) == 1:
-            return sorted_list[0]
-        
-        elif len(sorted_list) == 2:
-            root = sorted_list[1]
-            root.left = sorted_list[0]
-            return root
-        
-        middle = len(sorted_list) // 2
+        middle = int(len(sorted_list)/2) #it's ok for both, even and odd lenght because python starts counting at 0
         root = sorted_list[middle]
 
         root.left = Tree.build_from_sorted_list_recursion(sorted_list[:middle])
