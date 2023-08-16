@@ -86,7 +86,7 @@ class Vector:
         return vectors
     
     @staticmethod
-    def cast_to_vector(*vectors: np.ndarray) -> List['Vector']:
+    def cast_to_vector(vectors: List[np.ndarray]) -> List['Vector']:
         return [Vector(vector) for vector in vectors]
 
 

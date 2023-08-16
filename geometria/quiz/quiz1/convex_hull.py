@@ -3,7 +3,8 @@ import numpy as np
 from typing import Union, List, Tuple
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from base import Vector, Segment
+from vector import Vector
+from segment import Segment
 
 class ConvexHull:
 
@@ -103,7 +104,7 @@ class ConvexHull:
         """
 
         #gets the leftmost lowest point
-        v0 = self.get_starting_point(points)
+        v0 = self.get_stating_point(points)
 
         #based on this leftmost lowest point, sort the points by the slope in ascending order
         sorted_points = self.sort_by_slope(v0, points)
