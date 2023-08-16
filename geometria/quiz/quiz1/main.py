@@ -53,4 +53,3 @@ p4 = Poligon(vectors4)
 print(f"is poligon ex. 4 convex? {p4.is_convex()}")
 plotter.plot_many(vectors4, with_labels=True)
 plotter.show()
-
