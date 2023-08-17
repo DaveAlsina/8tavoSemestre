@@ -78,6 +78,40 @@ class Vector:
     #               Static methods
     #================================================
     @staticmethod
+    def get_leftmost_point(points: List['Vector']) -> 'Vector':
+        """
+            Finds the leftmost point from a list of points.
+
+            Input:
+                points: List[Vector]
+            Output:
+                leftmost_point: Vector
+        """
+        # find the leftmost point
+        leftmost_point = points[0]
+        for point in points:
+            if point[0] < leftmost_point[0]:
+                leftmost_point = point
+        return leftmost_point
+    
+    @staticmethod
+    def get_rightmost_point(points: List['Vector']) -> 'Vector':
+        """
+            Finds the rightmost point from a list of points.
+
+            Input:
+                points: List[Vector]
+            Output:
+                rightmost_point: Vector
+        """
+        # find the rightmost point
+        rightmost_point = points[0]
+        for point in points:
+            if point[0] > rightmost_point[0]:
+                rightmost_point = point
+        return rightmost_point
+
+    @staticmethod
     def build_random_vectors(nvectors:int, minval = -10, maxval = 10) -> List['Vector']:
         vectors = []
         for i in range(nvectors):
@@ -89,6 +123,7 @@ class Vector:
     def cast_to_vector(*vectors: np.ndarray) -> List['Vector']:
         return [Vector(vector) for vector in vectors]
 
+    @staticmethod
 
     #================================================
     #               Operator overloading
