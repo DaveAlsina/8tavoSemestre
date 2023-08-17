@@ -14,6 +14,7 @@ class Node(ABC):
         self.value = value
         self.left = None
         self.right = None
+        self.extra = None
 
     def __repr__(self):
         return f"Node({self.value})"
@@ -50,6 +51,10 @@ class Node1D(Node):
         self.value = value
         self.left = None
         self.right = None
+        
+        #extra attribute to store something useful
+        #like a segment, a point, etc.
+        self.extra = None
 
     #=====================================
     #       order comparison methods

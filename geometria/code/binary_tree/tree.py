@@ -32,6 +32,7 @@ class Tree():
 
         self.sorted = sorted
         self.dimension = dimension
+        self.inorder_values = None
 
         if not sorted:
             self.build()
@@ -127,4 +128,3 @@ class Tree():
                 child.parent = root
             else:
                 Tree.normal_insert(root.left, child)
-    

@@ -1,4 +1,5 @@
 import os, sys
+import numpy as np
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from typing import Union, List, Tuple
 
@@ -25,6 +26,7 @@ class LineSweep:
 
         """
             Sort the endpoints of the segments.
+            Used mainly to build the events list.
 
             Returns:
                 list of tuples (endpoint, segment) sorted by endpoint, which is a vector.
@@ -39,6 +41,37 @@ class LineSweep:
         # sort by using the vector own comparison methods
         endpoints.sort(key=lambda w: w[0])
         return endpoints
+    
+    def find_intersections_with_sweepline(self, sweepline_position: float) -> List[Segment]:
+
+        sweepline_start = Vector(np.array([[-np.inf], [sweepline_position]]))
+        sweepline_end   = Vector(np.array([[np.inf], [sweepline_position]]))
+        sweepline = Segment(sweepline_start, sweepline_end)
+
+        intersections = []
+        for segment in self.status.inorder():
+
+            interect = sweepline.find_intersection(segment)
+            intersections.append( (interect[0], segment) )
+    
+    def add_to_status_tree(self, segment: Segment) -> None:
+
+        """
+            Add a segment to the status tree.
+        """
+
+        if self.status is not None:
+            self.status.insert(Node1D(segment))
+        else:
+            self.status = Tree(Node1D(segment))
+        return 
+    
+    def remove_from_status_tree(self, segment: Segment) -> None:
+        return 
+
+    def order_by_intersect_with_sweep_line(self, sweepline_position: float) -> List[Segment]:
+        return 
+
 
     def handle_start_endpoint(self, segment: Segment) -> bool:
 
@@ -50,11 +83,7 @@ class LineSweep:
                 segment: segment whose start endpoint is being handled.
         """
 
-        if self.status is None:
-            self.status = Tree(Node1D(segment))
-        
-        else:
-            self.status.insert(Node1D(segment))
+        self.add_to_status_tree(segment)
         
         # check for intersections, for this we need to check to the left and right of the segment
         # in the status
