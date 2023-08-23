@@ -8,6 +8,9 @@ from segment import Segment
 class VectorPlotter:
 
     def __init__(self):
+        """
+            This class is used to plot vectors.
+        """
         pass
 
     @staticmethod
@@ -63,6 +66,9 @@ class VectorPlotter:
 class SegmentPlotter:
 
     def __init__(self):
+        """
+            This class is used to plot segments.
+        """
         pass
 
     @staticmethod
@@ -77,7 +83,9 @@ class SegmentPlotter:
 
     
     @staticmethod
-    def plot_many(segments: List[Segment], with_labels: bool=True) -> None:
+    def plot_many(segments: List[Segment],
+                  with_labels: bool=True, 
+                  title: str = '') -> None:
 
         left = min([min([seg.start[0], seg.end[0]]) for seg in segments])
         right = max([max([seg.start[0], seg.end[0]]) for seg in segments])
@@ -96,4 +104,20 @@ class SegmentPlotter:
                 #add text label on the middle of the segment
                 middle = segment.get_midpoint()
                 plt.text(middle.vector[0][0], middle.vector[1][0], f"S{i}")
-            
+        
+        plt.title(title)
+
+    @staticmethod
+    def plot_many_with_intersections(segments: List[Segment],
+                                     intersections: List[Vector],
+                                     with_labels: bool=True, 
+                                     title: str = '') -> None:
+        
+        SegmentPlotter.plot_many(segments, with_labels=with_labels)
+
+        for i, intersection in enumerate(intersections):
+            plt.scatter(intersection.vector[0][0], intersection.vector[1][0], color="r", marker="X")
+            if with_labels:
+                plt.text(intersection.vector[0][0], intersection.vector[1][0], f"I{i}")
+
+        plt.title(title)

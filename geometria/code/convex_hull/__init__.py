@@ -9,6 +9,4 @@ sys.path.append(parent_dir)
 sys.path.append(parent2_dir)
 
 
-from base import SwissArmyKnifePlotting
-from base import Vector
-from convex_hull import ConvexHull
+from convex_hull_graham import ConvexHullGraham

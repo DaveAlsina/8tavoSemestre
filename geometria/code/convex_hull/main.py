@@ -1,11 +1,11 @@
 import numpy as np 
 from matplotlib import pyplot as plt
 
-from convex_hull import *
+from convex_hull_graham import ConvexHullGraham
 from base import Vector, VectorPlotter
 
 np.random.seed(70)
-convex_hull = ConvexHull()
+convex_hull = ConvexHullGraham()
 plotter = VectorPlotter()
 nvectors = 50
 

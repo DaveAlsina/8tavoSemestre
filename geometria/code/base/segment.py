@@ -61,14 +61,20 @@ class Segment():
         """
             Given our segment, and a vector3, determine if vector3 is rotated clockwise or anticlockwise, 
             or if they are colineal, with respect to the segment.
+
+            Returns:
+            -----------------------
+                -1 if anticlockwise.
+                1 if clockwise.
+                0 if colineal.
         """
         det = np.linalg.det(np.column_stack([(vector3 - self.start).vector, (self.end - self.start).vector]))
 
-        if det < 0:
+        if det < 0: #anticlockwise
             return -1
-        elif det > 0:
+        elif det > 0: #clockwise
             return 1
-        return 0
+        return 0 #colineal
 
     def segments_intersect(self, other_segment: 'Segment') -> bool:
 
