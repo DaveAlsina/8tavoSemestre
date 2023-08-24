@@ -168,15 +168,22 @@ class Segment():
 
         if same_slope:
             if (p0_on_segment and p1_on_segment):
-                return Segment(self.start, self.end)
+                ans =  Segment(self.start, self.end)
             elif (p2_on_segment and p3_on_segment):
-                return Segment(other_segment.start, other_segment.end)
+                ans = Segment(other_segment.start, other_segment.end)
             elif (p0_on_segment and p3_on_segment):
-                return Segment(self.start, other_segment.end)
+                ans = Segment(self.start, other_segment.end)
             elif (p2_on_segment and p1_on_segment):
-                return Segment(other_segment.start, self.end)
+                ans = Segment(other_segment.start, self.end)
             else:
                 return None
+
+        #there could be a posibility that it matches as a segment
+        #something that it's indeed a point
+        if ans.start == ans.end:
+            return None 
+        else:
+            return ans
 
 
     @staticmethod
@@ -207,3 +214,6 @@ class Segment():
         
     def __ne__(self, other_segment: 'Segment') -> bool:
         return not self.__eq__(other_segment)
+    
+    def __hash__(self):
+        return hash((self.start, self.end))

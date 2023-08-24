@@ -5,6 +5,8 @@ from typing import Union, List
 from vector import Vector
 from segment import Segment
 
+plt.rcParams["figure.autolayout"] = True
+
 class VectorPlotter:
 
     def __init__(self):
@@ -105,7 +107,7 @@ class SegmentPlotter:
                 middle = segment.get_midpoint()
                 plt.text(middle.vector[0][0], middle.vector[1][0], f"S{i}")
             
-        plt.tile(title)
+        plt.title(title)
 
     @staticmethod
     def plot_many_with_intersections(segments: List[Segment],
@@ -113,25 +115,33 @@ class SegmentPlotter:
                                      with_labels: bool=True, 
                                      title: str = '') -> None:
         
+        fig = plt.figure()
         SegmentPlotter.plot_many(segments, with_labels=with_labels)
+        
+        #remove duplicates
+        intersections = set(intersections)
 
         for i, intersection in enumerate(intersections):
             
             #plots a dotted line if the intersection is a segment, this line
-            #has black color and no end points
+            #has black color and no end points, it also shifts the line 
+            #a little bit below
             if isinstance(intersection, Segment):
-                plt.plot([intersection.start.vector[0][0], intersection.end.vector[0][0]], [intersection.start.vector[1][0], intersection.end.vector[1][0]], color="k", linestyle="dotted")
+                print(f"INTERVAL intersect {intersection}")
+                plt.plot([intersection.start.vector[0], intersection.end.vector[0]], [intersection.start.vector[1], intersection.end.vector[1]], color = 'k', linestyle="dotted")
 
                 #add text label on the middle of the segment
                 if with_labels:
                     middle = intersection.get_midpoint()
-                    plt.text(middle.vector[0][0], middle.vector[1][0], f"I{i}")
+                    plt.text(middle.vector[0], middle.vector[1]-0.33, f"I{i}")
 
             #plots a red cross if the intersection is a vector
             elif isinstance(intersection, Vector):
-                plt.scatter(intersection.vector[0][0], intersection.vector[1][0], color="r", marker="X")
+                print(f"POINT intersect {intersection}")
+                plt.scatter(intersection[0], intersection[1], color="r", marker="X")
 
                 if with_labels:
-                    plt.text(intersection.vector[0][0], intersection.vector[1][0], f"I{i}")
+                    plt.text(intersection[0], intersection[1]-0.33, f"P{i}")
 
+        fig.text(0.5, -0.1, "I: Intervalos de Intersección\nP: Puntos de intersección\nS: Segmentos", ha="center")
         plt.title(title)

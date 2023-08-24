@@ -106,6 +106,34 @@ class Segment():
         else:
             return False
     
+    def get_intersection_of_segments_general(self, other_segment: 'Segment') -> List['Segment', Vector]:
+
+        """
+            This method uses the find_intersection_on_endpoints, 
+            the find_intersection, and the find_interval_intersection methods,
+            which respectively get the intersect on endpoints (if any),
+            the intersection between segments (if any), 
+            and the intersection on an interval (if any).
+        """
+    
+        # Find the intersection point (if any)
+        intersection = self.find_intersection(other_segment)
+
+        # Find the intersection on endpoints (if any)
+        intersection_on_endpoints = self.find_intersection_on_endpoints(other_segment)
+
+        # Find the intersection on segments (if any)
+        intersection_on_segments = self.find_interval_intersection(other_segment)
+
+        if intersection_on_segments is not None:
+            return intersection_on_segments
+        elif intersection_on_endpoints is not None:
+            return intersection_on_endpoints
+        else:
+            return intersection
+
+
+    
     def find_intersection_on_endpoints(self, other_segment: 'Segment') -> Union['Segment', None]:
         """
             Finds the intersection of the segments on the endpoints.
@@ -160,18 +188,25 @@ class Segment():
         p2_on_segment = self.on_segment(other_segment.start)
         p3_on_segment = self.on_segment(other_segment.end)
 
+
         if same_slope:
             if (p0_on_segment and p1_on_segment):
-                return Segment(self.start, self.end)
+                ans =  Segment(self.start, self.end)
             elif (p2_on_segment and p3_on_segment):
-                return Segment(other_segment.start, other_segment.end)
+                ans = Segment(other_segment.start, other_segment.end)
             elif (p0_on_segment and p3_on_segment):
-                return Segment(self.start, other_segment.end)
+                ans = Segment(self.start, other_segment.end)
             elif (p2_on_segment and p1_on_segment):
-                return Segment(other_segment.start, self.end)
+                ans = Segment(other_segment.start, self.end)
             else:
                 return None
 
+        #there could be a posibility that it matches as a segment
+        #something that it's indeed a point
+        if ans.start == ans.end:
+            return None 
+        else:
+            return ans
 
     @staticmethod
     def build_random_segments(nsegments: int=10)-> List['Segment']:
@@ -201,3 +236,6 @@ class Segment():
         
     def __ne__(self, other_segment: 'Segment') -> bool:
         return not self.__eq__(other_segment)
+    
+    def __hash__(self):
+        return hash((self.start, self.end))
