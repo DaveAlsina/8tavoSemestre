@@ -46,6 +46,7 @@ class LineSweep:
             Used mainly to build the events list.
 
             Returns:
+            -------------------
                 list of tuples (endpoint, segment) sorted by endpoint, which is a vector.
                 this sorting is done by using the vector own comparison methods.
         """
@@ -75,6 +76,10 @@ class LineSweep:
 
         """
             Add a segment to the status tree.
+            
+            Returns:
+            -------------------
+                Node1D: node in the status tree that represents the segment.
         """
         if self.status_tree is not None:
             # we insert the segment in the status tree, by using the intersection with the sweepline

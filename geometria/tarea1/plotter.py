@@ -127,7 +127,7 @@ class SegmentPlotter:
             #has black color and no end points, it also shifts the line 
             #a little bit below
             if isinstance(intersection, Segment):
-                print(f"INTERVAL intersect {intersection}")
+                #print(f"INTERVAL intersect {intersection}")
                 plt.plot([intersection.start.vector[0], intersection.end.vector[0]], [intersection.start.vector[1], intersection.end.vector[1]], color = 'k', linestyle="dotted")
 
                 #add text label on the middle of the segment
@@ -137,7 +137,7 @@ class SegmentPlotter:
 
             #plots a red cross if the intersection is a vector
             elif isinstance(intersection, Vector):
-                print(f"POINT intersect {intersection}")
+                #print(f"POINT intersect {intersection}")
                 plt.scatter(intersection[0], intersection[1], color="r", marker="X")
 
                 if with_labels:

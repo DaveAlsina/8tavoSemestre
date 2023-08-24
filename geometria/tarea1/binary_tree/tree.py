@@ -6,33 +6,44 @@ class Tree():
     def __init__(self,
                  values: List[Union[float, Node1D, Node2D]],
                  sorted: bool = False, 
-                 dimension: int = 1):
+                 dimension: int = 1, 
+                 need_cast: bool = False):
 
         """
             Builds a tree from a list of values.
-            If sorted is True, the list must be ordered. And the code the tree comes from the Tree.build_from_sorted_list method.
-            So it won't be necessary to build the tree again.
+
+            Args:
+            --------------
+                values: list of values to be inserted in the tree.
+                sorted: if the values are already sorted.
+                dimension: dimension of the values. It can be 1 or 2.
+                need_cast: if the values are not nodes, cast them to nodes.
+            
+            Returns:
+            --------------
+                tree: the tree.
         """
 
         if dimension == 1:
             #if the values are not nodes, cast them to nodes
-            if not isinstance(values[0], Node1D):
+            if need_cast:
                 self.list_of_nodes = Node1D.cast_to_nodes(values)
             else:
                 self.list_of_nodes = values
             
         elif dimension == 2:
             #if the values are not nodes, cast them to nodes
-            if not isinstance(values[0], Node2D):
+            if need_cast:
                 self.list_of_nodes = Node2D.cast_to_nodes(values)
             else:
                 self.list_of_nodes = values
+
         else:
             raise ValueError("dimension must be 1 or 2")
 
+        self.root = None
         self.sorted = sorted
         self.dimension = dimension
-        self.inorder_values = None
 
         if not sorted:
             self.build()
@@ -51,18 +62,16 @@ class Tree():
 
         """
             Reads the tree in inorder.
-            and returns the list of values. Which should be ordered.
+            and returns the list of Nodes in ascending order, following 
+            the order overloads of the Node class.
         """
+        return Tree.inorder_recursion(self.root)
 
-        ordered_values = []
-        Tree.inorder_recursion(self.root, ordered_values)
-
-        if self.dimension == 1:
-            ordered_values = Node1D.cast_to_nodes(ordered_values)
-        elif self.dimension == 2:
-            ordered_values = Node2D.cast_to_nodes(ordered_values)
-
-        return ordered_values
+    def insert(self, node: Union[Node1D, Node2D]) -> None:
+        """
+            Inserts a node in the tree.
+        """
+        Tree.normal_insert(self.root, node)
     
     def build_from_sorted_list(self, sorted_list: List[Union[Node1D, Node2D]])-> 'Tree':
 
@@ -95,15 +104,22 @@ class Tree():
 
         return root
         
+        
     @staticmethod
-    def inorder_recursion(root: Node, values: list) -> None:
-        
+    def inorder_recursion(root: Node) -> List[Union[Node1D, Node2D]]:
+        """
+            Reads the tree in inorder.
+            and returns the list of Nodes in ascending order, following 
+            the order overloads of the Node class.
+        """
+
         if root is None:
-            return
-        
-        Tree.inorder_recursion(root.left, values)
-        values.append(root.value)
-        Tree.inorder_recursion(root.right, values)
+            return []
+
+        if root.left is None and root.right is None:
+            return [root,]
+
+        return Tree.inorder_recursion(root.left) + [root,] + Tree.inorder_recursion(root.right)
     
 
     @staticmethod
@@ -117,7 +133,6 @@ class Tree():
             
             if root.right is None:
                 root.right = child
-                child.parent = root
             else:
                 Tree.normal_insert(root.right, child)
 
@@ -125,6 +140,5 @@ class Tree():
         elif (root >= child):
             if root.left is None:
                 root.left = child
-                child.parent = root
             else:
                 Tree.normal_insert(root.left, child)

@@ -20,5 +20,6 @@ print(f"ordered_values: {ordered_values}")
 
 
 # build the tree from the ordered list of values
-#newTree = tree.build_from_sorted_list(ordered_values)
+newTree = tree.build_from_sorted_list(ordered_values)
+print(f"newTree: {newTree.inorder()}")
 #plotter.plot(newTree, filename="New Tree")

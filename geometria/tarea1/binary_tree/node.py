@@ -5,9 +5,6 @@ from typing import Union, List
 from pyparsing import abstractmethod
 from abc import ABC
 
-#custom imports
-from base import Vector, Segment
-
 class Node(ABC):
 
     def __init__(self, value):

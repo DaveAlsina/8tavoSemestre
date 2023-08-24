@@ -106,7 +106,7 @@ class Segment():
         else:
             return False
     
-    def get_intersection_of_segments_general(self, other_segment: 'Segment') -> List['Segment', Vector]:
+    def get_intersection_of_segments_general(self, other_segment: 'Segment') -> Union['Segment', Vector]:
 
         """
             This method uses the find_intersection_on_endpoints, 
@@ -187,7 +187,7 @@ class Segment():
         p1_on_segment = other_segment.on_segment(self.end)
         p2_on_segment = self.on_segment(other_segment.start)
         p3_on_segment = self.on_segment(other_segment.end)
-
+        ans = None
 
         if same_slope:
             if (p0_on_segment and p1_on_segment):
@@ -199,7 +199,9 @@ class Segment():
             elif (p2_on_segment and p1_on_segment):
                 ans = Segment(other_segment.start, self.end)
             else:
-                return None
+                return ans
+        else:
+            return ans
 
         #there could be a posibility that it matches as a segment
         #something that it's indeed a point
