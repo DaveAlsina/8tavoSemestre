@@ -66,8 +66,6 @@ class SweepLine:
             node.right = None
             updated_nodes.append(node)
         
-        print("\tupdated nodes: ", updated_nodes)
-        
         # rebuild the status tree
         self.status_tree = Tree(updated_nodes)
         self.sorted_status = self.status_tree.inorder() 
