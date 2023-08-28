@@ -103,7 +103,7 @@ class SweepLine:
 
         return intersections
 
-    def find_intersections_on_left_or_right(self, idx) -> Union[Tuple[Vector, Segment], None]:
+    def find_intersections_on_left_or_right(self, idx) -> List[Tuple[Vector, Segment]]:
         """
             Given a node index, checks its left and right neighborh
             to see if any intersection with one of them.
@@ -116,10 +116,15 @@ class SweepLine:
             -----------
                 The intersection point of the segment with its neiborhs and the other
                 segment it intersects.
+
+                intersections: list of tuples (intersection, segment)
         """
         segment = self.sorted_status[idx].extra
         left = idx-1
         right = idx+1
+        
+        #list of tuples (intersection, segment)
+        intersections = []
 
         # if a left segment exists
         if left >= 0:
@@ -130,7 +135,7 @@ class SweepLine:
             if left_segment.segments_intersect(segment):
                 i = left_segment.get_intersection_of_segments_general(segment)
                 print("\t\thas intersection ", i)
-                return i, left_segment
+                intersections.append((i, left_segment))
 
         #if a right segment exists
         if right < len(self.sorted_status):
@@ -141,7 +146,9 @@ class SweepLine:
             if right_segment.segments_intersect(segment):
                 i = right_segment.get_intersection_of_segments_general(segment)
                 print("\t\thas intersection ", i)
-                return i, right_segment
+                intersections.append((i, right_segment))
+
+        return intersections
 
     def add_to_status_tree(self, segment: Segment) -> Node1D:
 
@@ -185,7 +192,7 @@ class SweepLine:
 
         
 
-    def handle_start_endpoint(self, segment: Segment) -> Union[Tuple[Vector, Segment], None]:
+    def handle_start_endpoint(self, segment: Segment) -> List[Tuple[Vector, Segment]]:
 
         """
             Handle the start endpoint of a segment.
@@ -215,7 +222,7 @@ class SweepLine:
         return self.find_intersections_on_left_or_right(idx)
         
 
-    def handle_end_endpoint(self, segment: Segment) -> Union[Tuple[Vector, Segment], None]:
+    def handle_end_endpoint(self, segment: Segment) -> List[Tuple[Vector, Segment]]:
 
         """
             Handle the end endpoint of a segment.
@@ -241,10 +248,10 @@ class SweepLine:
         # finally we remove the segment from the status
         self.remove_from_status_tree(idx)
 
-        if intersect_tuple is not None:
-            return intersect_tuple[0], intersect_tuple[1]
+        if intersect_tuple:
+            return intersect_tuple
         else:
-            return None
+            return []
 
         
 
@@ -293,22 +300,23 @@ class SweepLine:
                 print("END ENDPOINT")
                 intersect = self.handle_end_endpoint(segment)
 
-            if intersect is not None:
+            if intersect:
                 
-                #checks if the intersection is already in the list
-                if intersect[0] not in self.intersections:
+                for i in intersect:
+                    #checks if the intersection is already in the list
+                    if i[0] not in self.intersections:
 
-                    #we choose as segment for the intersection the one with the biggest 
-                    #endpoint using the vector own comparison methods, this is because
-                    #we want to avoid that the segment associated to the intersection
-                    #is deleted from the status tree, and later on the intersection
-                    #is left alone
-                    intersect_segment = max((segment, intersect[1]), key=lambda w: w.end)
+                        #we choose as segment for the intersection the one with the biggest 
+                        #endpoint using the vector own comparison methods, this is because
+                        #we want to avoid that the segment associated to the intersection
+                        #is deleted from the status tree, and later on the intersection
+                        #is left alone
+                        intersect_segment = max((segment, i[1]), key=lambda w: w.end)
 
-                    # we insert the intersection point in the events list, 
-                    # which is already sorted by our lexigraphic vector ordering
-                    bisect.insort(self.event_points, (intersect[0], intersect_segment), key=lambda w: w[0])
-                    self.intersections.append(intersect[0])
+                        # we insert the intersection point in the events list, 
+                        # which is already sorted by our lexigraphic vector ordering
+                        bisect.insort(self.event_points, (i[0], intersect_segment), key=lambda w: w[0])
+                        self.intersections.append(i[0])
             
 
             if plotting:
