@@ -61,20 +61,14 @@ class Segment():
         """
             Given our segment, and a vector3, determine if vector3 is rotated clockwise or anticlockwise, 
             or if they are colineal, with respect to the segment.
-
-            Returns:
-            -----------------------
-                -1 if anticlockwise.
-                1 if clockwise.
-                0 if colineal.
         """
         det = np.linalg.det(np.column_stack([(vector3 - self.start).vector, (self.end - self.start).vector]))
 
-        if det < 0: #anticlockwise
+        if det < 0:
             return -1
-        elif det > 0: #clockwise
+        elif det > 0:
             return 1
-        return 0 #colineal
+        return 0
 
     def segments_intersect(self, other_segment: 'Segment') -> bool:
 
@@ -111,6 +105,34 @@ class Segment():
         
         else:
             return False
+    
+    def get_intersection_of_segments_general(self, other_segment: 'Segment') -> Union['Segment', Vector]:
+
+        """
+            This method uses the find_intersection_on_endpoints, 
+            the find_intersection, and the find_interval_intersection methods,
+            which respectively get the intersect on endpoints (if any),
+            the intersection between segments (if any), 
+            and the intersection on an interval (if any).
+        """
+    
+        # Find the intersection point (if any)
+        intersection = self.find_intersection(other_segment)
+
+        # Find the intersection on endpoints (if any)
+        intersection_on_endpoints = self.find_intersection_on_endpoints(other_segment)
+
+        # Find the intersection on segments (if any)
+        intersection_on_segments = self.find_interval_intersection(other_segment)
+
+        if intersection_on_segments is not None:
+            return intersection_on_segments
+        elif intersection_on_endpoints is not None:
+            return intersection_on_endpoints
+        else:
+            return intersection
+
+
     
     def find_intersection_on_endpoints(self, other_segment: 'Segment') -> Union['Segment', None]:
         """
@@ -165,6 +187,7 @@ class Segment():
         p1_on_segment = other_segment.on_segment(self.end)
         p2_on_segment = self.on_segment(other_segment.start)
         p3_on_segment = self.on_segment(other_segment.end)
+        ans = None
 
         if same_slope:
             if (p0_on_segment and p1_on_segment):
@@ -176,7 +199,9 @@ class Segment():
             elif (p2_on_segment and p1_on_segment):
                 ans = Segment(other_segment.start, self.end)
             else:
-                return None
+                return ans
+        else:
+            return ans
 
         #there could be a posibility that it matches as a segment
         #something that it's indeed a point
@@ -184,7 +209,6 @@ class Segment():
             return None 
         else:
             return ans
-
 
     @staticmethod
     def build_random_segments(nsegments: int=10)-> List['Segment']:

@@ -89,7 +89,7 @@ class Vector:
         """
         # find the leftmost point
         leftmost_point = points[0]
-        for point in points:
+        for point in points[1:]:
             if point[0] < leftmost_point[0]:
                 leftmost_point = point
         return leftmost_point
@@ -106,7 +106,7 @@ class Vector:
         """
         # find the rightmost point
         rightmost_point = points[0]
-        for point in points:
+        for point in points[1:]:
             if point[0] > rightmost_point[0]:
                 rightmost_point = point
         return rightmost_point
@@ -168,11 +168,11 @@ class Vector:
     def __ne__(self, vector: 'Vector') -> bool:
         return (self[0] != vector[0]) or (self[1] != vector[1])
 
-    def __gt__(self, vector2: 'Vector') -> bool:
-        return (self[1] > vector2[1]) or (self[1] == vector2[1] and self[0] < vector2[0])
-    
     def __lt__(self, vector2: 'Vector') -> bool:
-        return (not (self > vector2)) and (self != vector2)
+        return (self[1] > vector2[1]) or (self[1] == vector2[1] and self[0] < vector2[0])
+
+    def __gt__(self, vector2: 'Vector') -> bool:
+        return (self[1] < vector2[1]) or (self[1] == vector2[1] and self[0] > vector2[0])
     
     def __ge__(self, vector2: 'Vector') -> bool:
         return (self > vector2) or (self == vector2)
