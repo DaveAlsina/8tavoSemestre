@@ -23,15 +23,15 @@ class VectorPlotter:
     def plot(v1: Vector, arrow: bool = False, highlighted: bool = False) -> None:
         
         if arrow:
-            plt.arrow(0, 0, v1.vector[0][0], v1.vector[1][0], head_width=0.1, head_length=0.1, color="g")
+            plt.arrow(0, 0, v1[0], v1[1], head_width=0.1, head_length=0.1, color="g")
             norm = np.linalg.norm(v1.vector)
-            plt.xlim(-2*norm, 2*norm)
-            plt.ylim(-2*norm, 2*norm)
+            plt.xlim(-1*norm, 1*norm)
+            plt.ylim(-1*norm, 1*norm)
         elif highlighted:
-            plt.scatter(v1.vector[0][0], v1.vector[1][0], color="b", s=30, marker="X")
-            plt.text(v1.vector[0][0], v1.vector[1][0], f"V{v1.vector}")
+            plt.scatter(v1[0], v1[1], color="b", s=30, marker="X")
+            plt.text(v1[0], v1[1], f"V{v1.vector}")
         else:
-            plt.scatter(v1.vector[0][0], v1.vector[1][0], color="b", s=20)
+            plt.scatter(v1[0], v1[1], color="b", s=20)
             norm = np.linalg.norm(v1.vector)
             plt.xlim(-1*norm, 1*norm)
             plt.ylim(-1*norm, 1*norm)
@@ -39,23 +39,23 @@ class VectorPlotter:
 
     @staticmethod
     def plot_many(vectors: List[Vector],
-                   highlighted: list = [],
-                   with_arrows: bool = False,
-                   with_labels: bool = False):
+                  highlighted: list = [],
+                  with_arrows: bool = False,
+                  with_labels: bool = False):
 
         for i, vector in enumerate(vectors):
             if with_arrows:
-                plt.arrow(0, 0, vector.vector[0][0], vector.vector[1][0], head_width=0.1, head_length=0.1, color="g")
+                plt.arrow(0, 0, vector[0], vector[1], head_width=0.1, head_length=0.1, color="g")
             else: 
-                plt.scatter(vector.vector[0][0], vector.vector[1][0], color="g", s=7)
+                plt.scatter(vector[0], vector[1], color="g", s=7)
 
             if with_labels:
-                plt.text(vector.vector[0][0], vector.vector[1][0], f"v{i}")
+                plt.text(vector[0], vector[1], f"v{i}")
 
 
         for vector in highlighted:
             #marker is a cross sign 
-            plt.scatter(vector.vector[0][0], vector.vector[1][0], color="b", s=20, marker="X")
+            plt.scatter(vector[0], vector[1], color="b", s=20, marker="X")
 
         norm = max([np.linalg.norm(v.vector) for v in vectors])
 
@@ -79,9 +79,9 @@ class SegmentPlotter:
 
     @staticmethod
     def plot(segment: Segment) -> None:
-        plt.plot([segment.start.vector[0][0], segment.end.vector[0][0]], [segment.start.vector[1][0], segment.end.vector[1][0]])
-        plt.scatter(segment.start.vector[0][0], segment.start.vector[1][0], color="g")
-        plt.scatter(segment.end.vector[0][0], segment.end.vector[1][0], color="g")
+        plt.plot([segment.start[0], segment.end[0]], [segment.start[1], segment.end[1]])
+        plt.scatter(segment.start[0], segment.start[1], color="g")
+        plt.scatter(segment.end[0], segment.end[1], color="g")
 
     
     @staticmethod
@@ -98,14 +98,14 @@ class SegmentPlotter:
         plt.ylim(down-1, up+1)
 
         for i, segment in enumerate(segments):
-            plt.plot([segment.start.vector[0][0], segment.end.vector[0][0]], [segment.start.vector[1][0], segment.end.vector[1][0]])
-            plt.scatter(segment.start.vector[0][0], segment.start.vector[1][0], color="g")
-            plt.scatter(segment.end.vector[0][0], segment.end.vector[1][0], color="g")
+            plt.plot([segment.start[0], segment.end[0]], [segment.start[1], segment.end[1]])
+            plt.scatter(segment.start[0], segment.start[1], color="g")
+            plt.scatter(segment.end[0], segment.end[1], color="g")
 
             if with_labels:
                 #add text label on the middle of the segment
                 middle = segment.get_midpoint()
-                plt.text(middle.vector[0][0], middle.vector[1][0], f"S{i}")
+                plt.text(middle[0], middle[1], f"S{i}")
             
         plt.title(title)
 
@@ -127,17 +127,17 @@ class SegmentPlotter:
             #has black color and no end points, it also shifts the line 
             #a little bit below
             if isinstance(intersection, Segment):
-                print(f"INTERVAL intersect {intersection}")
-                plt.plot([intersection.start.vector[0], intersection.end.vector[0]], [intersection.start.vector[1], intersection.end.vector[1]], color = 'k', linestyle="dotted")
+                #print(f"INTERVAL intersect {intersection}")
+                plt.plot([intersection.start[0], intersection.end[0]], [intersection.start[1], intersection.end[1]], color = 'k', linestyle="dotted")
 
                 #add text label on the middle of the segment
                 if with_labels:
                     middle = intersection.get_midpoint()
-                    plt.text(middle.vector[0], middle.vector[1]-0.33, f"I{i}")
+                    plt.text(middle[0], middle[1]-0.33, f"I{i}")
 
             #plots a red cross if the intersection is a vector
             elif isinstance(intersection, Vector):
-                print(f"POINT intersect {intersection}")
+                #print(f"POINT intersect {intersection}")
                 plt.scatter(intersection[0], intersection[1], color="r", marker="X")
 
                 if with_labels:
