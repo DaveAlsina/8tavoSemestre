@@ -1,4 +1,3 @@
-
 from calc import Calculator
 
 class Display:
@@ -12,9 +11,7 @@ class Display:
         self.b = int(input("Enter the second number: "))
 
     def display_operations_menu(self) -> int:
-        for i, op in self.c.operations.items():
-            print(f"{i}) {op}")
-
+        self.c.operation_manager.show_operations()
         return int(input("Enter the operation number: "))
 
     def display_result(self, result):
@@ -28,14 +25,13 @@ class Display:
             self.take_input()
             op = self.display_operations_menu()
 
-            #gets the operation from the calculator, operations dict, if not found, returns None
-            operation = self.c.operations.get(op, None)
+            #executes the operation, if it is valid gives the result, result is None
+            result = self.c.execute(op, self.a, self.b)
 
-            if operation is None:
+            if result is None:
                 print("Invalid operation")
                 continue
             
-            result = operation.execute(self.a, self.b)
             self.display_result(result)
 
             if input("Do you want to continue? (y/n) ") == "n":

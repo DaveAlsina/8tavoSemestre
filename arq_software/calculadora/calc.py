@@ -1,5 +1,5 @@
-import random
-from operations import Operation, Add, Subtract, Multiply, Divide, IntegerDivide, Mod, Pow
+from typing import Union
+from operation_manager import OperationManager
 
 class Calculator:
 
@@ -7,40 +7,18 @@ class Calculator:
         """
         This class is a wrapper for the operations classes.    
         """
-        self.operations = {0: Add(),
-                           1: Subtract(),
-                           2: Multiply(),
-                           3: Divide(),
-                           4: IntegerDivide(),
-                           5: Mod(),
-                           6: Pow()}
+        self.operation_manager = OperationManager()
 
-    def execute(self, op: Operation, a: int, b: int) -> float:
+    def execute(self, operation_idx: int, a: int, b: int) -> Union[float , None]:
         """
         Executes the operation op with operands a and b.
         """
-        return op.execute(a, b)
+        operation = self.operation_manager.get_operation(operation_idx)
 
-    def add(self, a: int, b: int) -> int:
-        return self.execute(self.operations[0], a, b)
-    
-    def sub(self, a: int, b: int) -> int:
-        return self.operations[1].execute(a, b)
-    
-    def mul(self, a: int, b: int) -> int:
-        return self.execute(self.operations[1], a, b)
-
-    def div(self, a: int, b: int) -> float:
-        return self.execute(self.operations[2], a, b)
-
-    def idiv(self, a: int, b: int) -> float:
-        return self.execute(self.operations[3], a, b)
-
-    def mod(self, a: int, b: int) -> int:
-        return self.execute(self.operations[4], a, b)
-    
-    def pow(self, a: int, b: int) -> int: 
-        return self.execute(self.operations[5], a, b)
+        if operation is None:
+            return None
+        else:
+            return operation.execute(a, b)
 
     def __str__(self) -> str:
         return f"Calculator class instance id: {id(self)}"
