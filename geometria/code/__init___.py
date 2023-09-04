@@ -7,4 +7,7 @@ parent_dir = "/".join(__file__.split("/")[:-1])
 sys.path.append(parent_dir)
 
 from base import *
+from binary_tree import *
 from convex_hull import *
+from line_sweep import *
+from double_connected_list import *
