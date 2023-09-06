@@ -326,6 +326,7 @@ class SweepLine:
                         bisect.insort(self.event_points, (i[0], intersect_segment, "intersection"), key=lambda w: w[0])
                         self.intersections.append(i[0])
             
+                print(f"Intersections: {self.intersections}")
 
             if plotting:
                 self.plot_current_state()
