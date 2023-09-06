@@ -9,14 +9,14 @@ from matplotlib import pyplot as plt
 from typing import Union, List, Tuple
 
 # custom dependencies
-from vector  import  Vector
-from segment import  Segment
-from plotter import  VectorPlotter, SegmentPlotter
+from base.vector  import  Vector
+from base.segment import  Segment
+from base.plotter import  VectorPlotter, SegmentPlotter
 from binary_tree import Tree, Node1D
 
 class SweepLine:
 
-    def __init__(self, segments: List[Segment]):
+    def __init__(self, segments: List[Segment], epsilon: float = 1e-7):
 
         """
             Implement the line sweep algorithm.
@@ -26,14 +26,16 @@ class SweepLine:
         """
 
         self.segments = segments
-        self.status_tree = None # type: Tree[Node1D]
-        self.event_points = None # type: List[Vector]
-        self.sorted_status = None # type: List[Node1D]
-        self.intersections = None # type: List[Vector]
+        self.epsilon = epsilon
+        self.status_tree : Tree[Node1D]   = None 
+        self.event_points : List[Vector]  = None 
+        self.sorted_status : List[Node1D] = None 
+        self.intersections : List[Vector] = None 
 
-        self.leftmost_endpoint = None # type: Vector
-        self.rightmost_endpoint = None # type: Vector
-        self.sweep_line = None # type: Segment
+        self.leftmost_endpoint : Vector  = None 
+        self.rightmost_endpoint : Vector = None 
+
+        self.sweep_line : Segment = None 
 
     def update_sweepline(self, y) -> Segment:
 
@@ -71,7 +73,7 @@ class SweepLine:
         self.sorted_status = self.status_tree.inorder() 
 
 
-    def sort_endpoints(self) -> List[Tuple[Vector, Segment]]:
+    def sort_endpoints(self) -> List[Tuple[Vector, Segment, str]]:
 
         """
             Sort the endpoints of the segments.
@@ -83,8 +85,8 @@ class SweepLine:
         """
         endpoints = []
         for segment in self.segments:
-            endpoints.append((segment.start, segment))
-            endpoints.append((segment.end, segment))
+            endpoints.append((segment.start, segment, "vertex"))
+            endpoints.append((segment.end, segment, "vertex"))
 
         # sort by using the vector own comparison methods
         endpoints.sort(key=lambda w: w[0])
@@ -275,16 +277,22 @@ class SweepLine:
         self.event_points = self.sort_endpoints()
         
         # used for delimitation of the sweepline width in the x axis
-        self.leftmost_endpoint  = Vector.get_leftmost_point([v for v, s in self.event_points])
-        self.rightmost_endpoint = Vector.get_rightmost_point([v for v, s in self.event_points])
+        self.leftmost_endpoint  = Vector.get_leftmost_point([v for v, s, t in self.event_points])
+        self.rightmost_endpoint = Vector.get_rightmost_point([v for v, s, t in self.event_points])
 
         # we iterate over the endpoints
         while len(self.event_points) > 0:
             print("count: ", count)
-            endpoint, segment = self.event_points.pop(0)
+            endpoint, segment, type_ = self.event_points.pop(0)
 
-            # we update the sweepline y = endpoint[1]
-            self.update_sweepline(endpoint[1])
+            if type_ == "vertex":
+                # we update the sweepline y = endpoint[1]
+                self.update_sweepline(endpoint[1])
+
+            if type_ == "intersection":
+                # we update the sweepline y = endpoint[1] - epsilon, 
+                # this is equivalent to check a little bit below the intersection
+                self.update_sweepline(endpoint[1] - self.epsilon)
 
             # we update the status tree
             if self.status_tree is not None:
@@ -315,7 +323,7 @@ class SweepLine:
 
                         # we insert the intersection point in the events list, 
                         # which is already sorted by our lexigraphic vector ordering
-                        bisect.insort(self.event_points, (i[0], intersect_segment), key=lambda w: w[0])
+                        bisect.insort(self.event_points, (i[0], intersect_segment, "intersection"), key=lambda w: w[0])
                         self.intersections.append(i[0])
             
 
