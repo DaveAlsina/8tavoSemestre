@@ -9,6 +9,6 @@ sys.path.append(parent_dir)
 sys.path.append(parent2_dir)
 
 
-from node import Node, Node1D, Node2D
-from tree import Tree
-from plotter import TreePlotter
+from .node import Node, Node1D, Node2D
+from .tree import Tree
+from .plotter import TreePlotter

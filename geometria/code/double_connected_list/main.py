@@ -10,4 +10,5 @@ set_of_points = [Vector(np.array([[5], [1]])), Vector(np.array([[8], [3]])),
                  Vector(np.array([[-1], [-1]])), Vector(np.array([[1], [5]]))]
 
 list_of_semiedges = SemiEdgeList(set_of_points)
+print("-"*80)
 print(list_of_semiedges)
