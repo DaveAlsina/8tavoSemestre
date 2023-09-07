@@ -7,3 +7,5 @@ parent2_dir = "/".join(__file__.split("/")[:-2])
 #add the parent directory to the path
 sys.path.append(parent_dir)
 sys.path.append(parent2_dir)
+
+from sweep_line import SweepLine

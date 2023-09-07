@@ -9,5 +9,5 @@ sys.path.append(parent_dir)
 from base import *
 from binary_tree import *
 from convex_hull import *
-from line_sweep import *
+from sweep_line import *
 from double_connected_list import *

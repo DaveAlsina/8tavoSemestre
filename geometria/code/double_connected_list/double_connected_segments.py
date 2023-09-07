@@ -66,11 +66,12 @@ class SemiEdge():
 
 class SemiEdgeList():
 
-    def __init__(self, list_of_points: List[Vector]):
+    def __init__(self, list_of_points: List[Vector], name: str = None):
         
         self.list_of_nodes : List[GeometricNode] = []
         self.semi_edges : List[SemiEdge] = []
         self.faces : List[Face] = []
+        self.name = name
         
         self._build_nodes(list_of_points)
         self._build_semi_edges()
@@ -140,11 +141,11 @@ class SemiEdgeList():
         # We iterate over the semi-edges
         for semi_edge in self.semi_edges:
 
-            print(f"iterating over semi-edge {semi_edge}, face: {semi_edge.incident_face}, face_count: {faces_count}")
+            #print(f"iterating over semi-edge {semi_edge}, face: {semi_edge.incident_face}, face_count: {faces_count}")
             # If the semi-edge doesn't have a face, then we add a face
             if semi_edge.incident_face == None:
                 # We create a new face
-                face = Face(name = f"F{faces_count}")
+                face = Face(name = f"{self.name}:F{faces_count}")
 
                 # We add the semi-edge to the face
                 face.add_semi_edge(semi_edge)
@@ -156,7 +157,7 @@ class SemiEdgeList():
 
                 # While the next semi-edge is not the initial semi-edge
                 while next_semi_edge != semi_edge:
-                    print(f"\t next_semi_edge: {next_semi_edge}, semi_edge: {semi_edge}, face: {face}, face_count: {faces_count}")
+                    #print(f"\t next_semi_edge: {next_semi_edge}, semi_edge: {semi_edge}, face: {face}, face_count: {faces_count}")
 
                     # We iterate over the next semi-edge
                     next_semi_edge = next_semi_edge.next_edge
