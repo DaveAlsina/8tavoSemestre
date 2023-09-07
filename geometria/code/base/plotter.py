@@ -119,29 +119,13 @@ class SegmentPlotter:
         SegmentPlotter.plot_many(segments, with_labels=with_labels)
         
         #remove duplicates
-        intersections = set(intersections)
+        intersections = list(set(intersections))
 
-        for i, intersection, in enumerate(intersections):
-            
-            #plots a dotted line if the intersection is a segment, this line
-            #has black color and no end points, it also shifts the line 
-            #a little bit below
-            if isinstance(intersection, Segment):
-                print(f"INTERVAL intersect {intersection}")
-                plt.plot([intersection.start[0], intersection.end[0]], [intersection.start[1], intersection.end[1]], color = 'k', linestyle="dotted")
+        for i, intersection in enumerate(intersections):
 
-                #add text label on the middle of the segment
-                if with_labels:
-                    middle = intersection.get_midpoint()
-                    plt.text(middle[0], middle[1]-0.33, f"I{i}")
-
-            #plots a red cross if the intersection is a vector
-            elif isinstance(intersection, Vector):
-                print(f"POINT intersect {intersection}")
-                plt.scatter(intersection[0], intersection[1], color="r", marker="X")
-
-                if with_labels:
-                    plt.text(intersection[0], intersection[1]-0.33, f"P{i}")
+            plt.scatter(intersection[0], intersection[1], color="r", marker="X")
+            if with_labels:
+                plt.text(intersection[0], intersection[1]-0.33, f"P{i}")
 
         fig.text(0.5, -0.1, "I: Intervalos de Intersección\nP: Puntos de intersección\nS: Segmentos", ha="center")
         plt.title(title)

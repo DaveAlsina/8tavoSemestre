@@ -15,4 +15,8 @@ def from_csv_2_segments(file: str = "segmentos.csv") -> List[Segment]:
     return segments
 
 custom_test_segments = from_csv_2_segments()
-SweepLine(custom_test_segments).run(plotting=True)
+intersects = SweepLine(custom_test_segments).run(plotting=0)
+print('-'*50)
+
+SegmentPlotter.plot_many_with_intersections(custom_test_segments, intersects, title="Custom Test")
+SegmentPlotter.show()
