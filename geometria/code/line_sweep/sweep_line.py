@@ -48,8 +48,8 @@ class SweepLine:
             Args:
             -----------
                 y: height of the sweepline.
-                type_: type of endpoint, whether it's a start, end or intersection endpoint.
-
+                type_: type of endpoint, whether it's a start, end (vertex) 
+                or intersection endpoint (intersection).
         """
 
         xleft = self.leftmost_endpoint[0] - 1
