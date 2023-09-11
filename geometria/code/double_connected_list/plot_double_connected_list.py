@@ -1,6 +1,7 @@
 from typing import List, Union
 import matplotlib.pyplot as plt
 from double_connected_segments import SemiEdgeList
+from base import Vector
 
 
 class PlotSubdivisions():
@@ -41,6 +42,7 @@ class PlotSubdivisions():
         plt.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.25)
 
     def plot_many(subdivisions: List[SemiEdgeList],
+                  intersection_points: List[Vector] = None,
                   colors: List[str] = ['black'],
                   linewidths: List[float] = [1.0],
                   alphas: List[float] = [0.5],) -> None:
@@ -64,6 +66,12 @@ class PlotSubdivisions():
                                   color=colors[i],
                                   linewidth=linewidths[i],
                                   alpha=alphas[i])
+
+        if intersection_points:
+            plt.scatter([point[0] for point in intersection_points],
+                        [point[1] for point in intersection_points],
+                        color='red',
+                        alpha=0.25)
         
         plt.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.25)
 

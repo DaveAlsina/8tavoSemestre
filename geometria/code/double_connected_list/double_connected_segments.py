@@ -66,7 +66,7 @@ class SemiEdge():
 
 class SemiEdgeList():
 
-    def __init__(self, list_of_points: List[Vector], name: str = None):
+    def __init__(self, list_of_points: List[Vector], name: str):
         
         self.list_of_nodes : List[GeometricNode] = []
         self.semi_edges : List[SemiEdge] = []
@@ -96,7 +96,7 @@ class SemiEdgeList():
         """
         self.list_of_nodes = []
         for i in range(len(list_of_points)):
-            node = GeometricNode(point = list_of_points[i], name = f"N{i}")
+            node = GeometricNode(point = list_of_points[i], name = f"{self.name}N{i}")
             self.list_of_nodes.append(node)
 
     def _build_semi_edges(self) -> List[SemiEdge]:

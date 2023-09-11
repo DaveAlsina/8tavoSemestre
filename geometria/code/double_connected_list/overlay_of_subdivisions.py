@@ -22,7 +22,7 @@ class OverlayOfSubdivisions():
 
     def __init__(self, 
                  subdivisions: list[SemiEdgeList],
-                 name: str = None):
+                 name: str):
 
         self.name = name
         self.subdivisions: list[SemiEdgeList] = deepcopy(subdivisions)
@@ -62,3 +62,9 @@ class OverlayOfSubdivisions():
             subdivisions.
         """
         self.overlay_intersections = SweepLine(self.list_of_segments).run(plotting=plotting)
+
+        #notice that every endpoint of subdivision is also an intersection point
+        self.overlay_intersections.extend([n.point for n in self.overlay.list_of_nodes])
+
+        #now we need to keep only the unique intersection points
+        self.overlay_intersections = list(set(self.overlay_intersections))

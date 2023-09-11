@@ -21,5 +21,10 @@ PlotSubdivisions.plot_many([list_of_semiedges1, list_of_semiedges2],)
 PlotSubdivisions.show()
 
 o = OverlayOfSubdivisions([list_of_semiedges1, list_of_semiedges2])
-o.find_subdivisions_intersections(True)
+o.find_subdivisions_intersections(False)
 print(o.overlay_intersections)
+
+# now with the overlay intersections we can build the overlay subdivision
+PlotSubdivisions.plot_many([list_of_semiedges1, list_of_semiedges2], 
+                           intersection_points=o.overlay_intersections)
+PlotSubdivisions.show()
