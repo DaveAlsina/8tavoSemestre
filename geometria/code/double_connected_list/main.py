@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from base.vector import Vector
 from double_connected_list.double_connected_segments import SemiEdgeList
 from double_connected_list.plot_double_connected_list import PlotSubdivisions 
+from double_connected_list.overlay_of_subdivisions import OverlayOfSubdivisions
 
 set_of_points1 = [Vector(np.array([[5], [1]])), Vector(np.array([[8], [3]])), 
                  Vector(np.array([[5], [-2]])), Vector(np.array([[2], [2]])), 
@@ -19,5 +20,6 @@ list_of_semiedges2 = SemiEdgeList(set_of_points2, name = "S2")
 PlotSubdivisions.plot_many([list_of_semiedges1, list_of_semiedges2],)
 PlotSubdivisions.show()
 
-#print("-"*80)
-#print(list_of_semiedges1)
+o = OverlayOfSubdivisions([list_of_semiedges1, list_of_semiedges2])
+o.find_subdivisions_intersections(True)
+print(o.overlay_intersections)

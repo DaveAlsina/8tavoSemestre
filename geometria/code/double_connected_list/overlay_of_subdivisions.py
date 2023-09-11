@@ -1,8 +1,9 @@
 # add path with sys
 import os, sys
+from copy import deepcopy
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from copy import deepcopy
+from base import Vector, Segment
 from sweep_line import SweepLine
 from double_connected_segments import GeometricNode, SemiEdge, SemiEdgeList
 
@@ -27,6 +28,12 @@ class OverlayOfSubdivisions():
         self.subdivisions: list[SemiEdgeList] = deepcopy(subdivisions)
         self.overlay : SemiEdgeList = None
 
+        self.list_of_segments: list[Segment] = None
+        self.overlay_intersections: list[Vector] = None
+
+        self.merge_semi_edge_lists()
+        self.build_list_of_segments_from_semiedge_list()
+
     def merge_semi_edge_lists(self) -> None:
         """
             This method merges the semi edge lists in the list of subdivisions
@@ -43,11 +50,15 @@ class OverlayOfSubdivisions():
         """
             This method builds the list of segments from the semi edge list.
         """
-        self.list_of_segments = [semiedge.seg for semiedge in self.overlay.semi_edges]
+
+        # This is a list of segments that will be used by the sweep line algorithm
+        # it's important to sort the ends of the segments, following the lexicographic
+        # ordering we've built in the Segment class.
+        self.list_of_segments = [Segment(semiedge.seg.start, semiedge.seg.end, sort_ends=True) for semiedge in self.overlay.semi_edges]
     
-    def find_subdivisions_intersections(self) -> None:
+    def find_subdivisions_intersections(self, plotting: bool = False) -> None:
         """
             This method finds the intersections between the segments of the 
             subdivisions.
         """
-        self.overlay_intersections = SweepLine(self.list_of_segments).run()
+        self.overlay_intersections = SweepLine(self.list_of_segments).run(plotting=plotting)
