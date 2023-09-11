@@ -16,7 +16,7 @@ from binary_tree import Tree, Node1D
 
 class SweepLine:
 
-    def __init__(self, segments: List[Segment], epsilon: float = 1e-12):
+    def __init__(self, segments: List[Segment], epsilon: float = 1e-3):
 
         """
             Implement the line sweep algorithm.
@@ -61,7 +61,7 @@ class SweepLine:
         # build the sweepline, from leftmost to rightmost points in the x axis
         # at height y, and tilt a little bit on the right end of the sweepline
         # in order to avoid problematic behavior with horizontal segments.
-        self.sweep_line = Segment(Vector(np.array([[xleft], [y]])), Vector(np.array([[xright], [y-self.epsilon]])))
+        self.sweep_line = Segment(Vector(np.array([[xleft], [y]])), Vector(np.array([[xright], [y + self.epsilon]])))
 
     def update_status_tree(self) -> None:
         """
@@ -83,8 +83,9 @@ class SweepLine:
             updated_nodes.append(node)
         
         # rebuild the status tree
-        self.status_tree = Tree(updated_nodes)
-        self.sorted_status = self.status_tree.inorder() 
+        if len(updated_nodes) > 0:
+            self.status_tree = Tree(updated_nodes)
+            self.sorted_status = self.status_tree.inorder() 
 
 
     def sort_endpoints(self) -> List[Tuple[Vector, Segment, str]]:
@@ -260,8 +261,15 @@ class SweepLine:
         #updates the sorted status
         self.sorted_status = self.status_tree.inorder()
 
-        # gets the index node associated to the segment we need    
-        idx = [n.extra for n in self.sorted_status].index(segment)
+        # gets the index node associated to the segment we need (there are 
+        # cases where the segment is no longer in the status tree, for example, 
+        # when there is an intersection in a horizontal segment, and the sweepline)
+        try:
+            idx = [n.extra for n in self.sorted_status].index(segment)
+        except ValueError:
+            print(f"segment {segment} not in status tree")
+            return []
+
         print("\tcurrent node: ", self.sorted_status[idx])
         print("\tsorted status: ", self.sorted_status)
 
@@ -320,7 +328,7 @@ class SweepLine:
         """
 
         if type_ == "intersection":
-            print("INTERSECTION ENDPOINT")
+            print(f"INTERSECTION ENDPOINT {endpoint} FROM SEGMENT {segment}")
             intersect = []
             # segment is a list of segments which intersect in the intersection point
             for seg in segment:
@@ -330,12 +338,12 @@ class SweepLine:
 
         # if the endpoint is the start of a segment, we handle it
         elif (endpoint == segment.start) and (type_ == "vertex"):
-            print("START ENDPOINT")
+            print(f"START ENDPOINT {endpoint} FROM SEGMENT {segment}")
             intersect = self.handle_start_endpoint(segment)
 
         # if the endpoint is the end of a segment, we handle it
         elif (endpoint == segment.end) and (type_ == "vertex"):
-            print("END ENDPOINT")
+            print(f"END ENDPOINT {endpoint} FROM SEGMENT {segment}")
             intersect = self.handle_end_endpoint(segment)
 
         #here we handle what to to do with the intersections, 
