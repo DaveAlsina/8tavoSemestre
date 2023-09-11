@@ -59,8 +59,9 @@ class SweepLine:
             y = y - self.epsilon
 
         # build the sweepline, from leftmost to rightmost points in the x axis
-        # at height y
-        self.sweep_line = Segment(Vector(np.array([[xleft], [y]])), Vector(np.array([[xright], [y]])))
+        # at height y, and tilt a little bit on the right end of the sweepline
+        # in order to avoid problematic behavior with horizontal segments.
+        self.sweep_line = Segment(Vector(np.array([[xleft], [y]])), Vector(np.array([[xright], [y-self.epsilon]])))
 
     def update_status_tree(self) -> None:
         """

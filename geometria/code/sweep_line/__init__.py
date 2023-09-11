@@ -8,4 +8,5 @@ parent2_dir = "/".join(__file__.split("/")[:-2])
 sys.path.append(parent_dir)
 sys.path.append(parent2_dir)
 
-from sweep_line import SweepLine
+
+from .sweep_line import SweepLine
