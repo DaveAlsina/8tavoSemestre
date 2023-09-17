@@ -4,8 +4,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from base.vector import Vector
 from double_connected_list.double_connected_segments import SemiEdgeList
-from double_connected_list.plot_double_connected_list import PlotSubdivisions 
-from double_connected_list.overlay_of_subdivisions import OverlayOfSubdivisions
+from code.double_connected_list.overlay.plot_subdivisions import PlotSubdivisions 
+from code.double_connected_list.overlay.overlay_of_subdivisions import OverlayOfSubdivisions
 
 set_of_points1 = [Vector(np.array([[5], [1]])), Vector(np.array([[8], [3]])), 
                  Vector(np.array([[5], [-2]])), Vector(np.array([[2], [2]])), 

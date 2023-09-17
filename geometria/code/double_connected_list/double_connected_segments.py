@@ -1,54 +1,60 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from typing import List
+from typing import List, Tuple, Literal, Union
 from copy import deepcopy
 
 from base.vector import Vector
 from base.segment import Segment
-
-
-class GeometricNode():
-    """
-        This class represents a node in a double connected edge list.
-    """
-
-    def __init__(self,
-                 point: Vector,
-                 name: str, 
-                 incident_edge: Segment = None,):
-
-        """
-            Every node name is a string that represents the name of the node, and
-            should have a format like this: 'N1', 'N2', 'N3', etc.
-        """
-        self.point = point
-        self.name = name
-        self.incident_edge = incident_edge
+from geometric_node import GeometricNode
+from face import Face
 
 
 #------------------------------------------------------------------------------#
-
 class SemiEdge():
 
     def __init__ (self, 
-                  origin: GeometricNode,
-                  next_: GeometricNode,
-                  incident_face: 'Face' = None):
+                  origin: Union[GeometricNode, Vector],
+                  next_: Union[GeometricNode, Vector],
+                  incident_face: Face = None, 
+                  need_cast: bool = False):
 
-        self.origin = origin
-        self.seg = Segment(origin.point, next_.point)
-        self.twin = Segment(next_.point, origin.point)
-        self.incident_face = incident_face
+        if need_cast:
+            self.origin: GeometricNode = GeometricNode(origin)
+            self.next_: GeometricNode = GeometricNode(next_)
 
-        self.next_edge = None
-        self.prev_edge = None
+        else:
+            self.origin: GeometricNode = origin
+            self.next_: GeometricNode = next_
+
+        self.seg: Segment = Segment(self.origin.point, self.next_.point)
+        self.twin: Segment = Segment(self.next_.point, self.origin.point)
+        self.incident_face: Face = incident_face
+
+        self.next_edge: SemiEdge = None
+        self.prev_edge: SemiEdge = None
+        
+        # This is used for the triangulation, the literal part is a constant 
+        # that indicates the helper vector type, this could be START_VERTEX,
+        # END_VERTEX, SPLIT_VERTEX, MERGE_VERTEX, REGULAR_VERTEX
+        self.helper: Tuple[Vector, Literal]= None
+    
+    @property
+    def start(self) -> Vector:
+        return self.seg.start
+    
+    @property
+    def end(self) -> Vector:
+        return self.seg.end
 
     def set_next_edge(self, next_edge: 'SemiEdge') -> None:
         self.next_edge = next_edge
     
     def set_prev_edge(self, prev_edge: 'SemiEdge') -> None:
         self.prev_edge = prev_edge
+    
+    def set_helper(self, helper: Tuple[Vector, int]) -> None:
+        self.helper = helper
 
     def __repr__(self) -> str:
         return f"{self.seg} {self.incident_face}"
@@ -63,7 +69,6 @@ class SemiEdge():
         return self.seg != semiedge.seg
 
 #------------------------------------------------------------------------------#
-
 class SemiEdgeList():
 
     def __init__(self, list_of_points: List[Vector], name: str):
@@ -87,7 +92,6 @@ class SemiEdgeList():
             semi-edges that are created by the intersection.
         """
         pass
-
 
     def _build_nodes(self, list_of_points: List[Vector]) -> None:
         """
@@ -168,32 +172,17 @@ class SemiEdgeList():
                 self.faces.append(face)
                 faces_count += 1
 
+    def __getitem__(self, index: int) -> SemiEdge:
+        return self.semi_edges[index]
+
+    def __len__(self) -> int:
+        return len(self.semi_edges)
+    
+    def __iter__(self):
+        return iter(self.semi_edges)
 
     def __str__(self) -> str:
         return f"{self.semi_edges}"
     
     def __repr__(self) -> str:
         return f"{self.semi_edges}"
-
-
-#------------------------------------------------------------------------------#
-
-class Face():
-    def __init__(self, name: str = None):
-        self.semi_edges = []
-        self._name = name
-    
-    def set_name(self, name: str) -> None:
-        self._name = name
-
-    def set_semi_edges(self, semi_edges: List[SemiEdge]) -> None:
-        self.semi_edges = semi_edges
-
-    def add_semi_edge(self, semi_edge: SemiEdge) -> None:
-        self.semi_edges.append(semi_edge)
-    
-    def __str__(self) -> str:
-        return f"{self._name}"
-    
-    def __repr__(self) -> str:
-        return f"{self._name}"
