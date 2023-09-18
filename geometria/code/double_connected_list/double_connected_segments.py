@@ -172,6 +172,12 @@ class SemiEdgeList():
                 self.faces.append(face)
                 faces_count += 1
 
+    def reset_faces(self) -> None:
+        for semi_edge in self.semi_edges:
+            semi_edge.incident_face = None
+        self.faces = []
+        self._set_faces()
+
     def __getitem__(self, index: int) -> SemiEdge:
         return self.semi_edges[index]
 

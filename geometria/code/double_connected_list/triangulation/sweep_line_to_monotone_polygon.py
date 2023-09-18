@@ -156,14 +156,15 @@ class SweepLineMonotonePoly:
         # get previous and next points of the vertex
         prev_point = prev_semiedge.origin.point
         next_point = semiedge.next_.point
-        rad, angle = Vector.calculate_angle(prev_point, vertex, next_point)
+        turn = Vector.calculate_turn(prev_point, vertex, next_point)
 
         # the neighbors of the vertex are below the vertex
         if (vertex < prev_point) and (vertex < next_point):
 
             #if the angle between prev_point, vertex and next_point is less than 180 degrees
-            #then the vertex is a start vertex
-            if angle < 180:
+            #then the vertex is a start vertex, this is the same as saying that the turn is 1
+            #(clockwise turn)
+            if turn == 1:
                 return START_VERTEX
             else:
                 return SPLIT_VERTEX
@@ -172,8 +173,9 @@ class SweepLineMonotonePoly:
         elif (vertex > prev_point) and (vertex > next_point):
 
             #if the angle between prev_point, vertex and next_point is less than 180 degrees
-            #then the vertex is a end vertex
-            if angle < 180:
+            #then the vertex is a end vertex, this is the same as saying that the turn is 1
+            #(clockwise turn)
+            if turn == 1:
                 return END_VERTEX
             else:
                 return MERGE_VERTEX
@@ -277,26 +279,7 @@ class SweepLineMonotonePoly:
         """
 
         if semiedge.helper is  None:
-            #get the semiedges that are above the sweepline, as we iterate over a lexically sorted list
-            #then we can easily get the semiedges that are above the sweepline 
-            semiedges_above_sweepline = self.event_points_copy[:self.count]
-
-            #iterate over the semiedges that are above the sweepline, in backwards order (from the last to the first)
-            #in order to find the lowest vertex that matches the criteria first
-            #(this will be inplemented later)
-
-            #otherwise the helper is the upper vertex of the semiedge
-            #this is the same as the smallest vertex of the segment
-            v = semiedge.origin.point if semiedge.origin.point < semiedge.next_.point else semiedge.next_.point
-            
-            #get the semiedge origin type from the classification list, this is the event_point_copy
-            #that corresponds to the semiedge
-            idx = [vec for vec,_,_ in self.event_points_copy].index(v)
-            type_ = self.event_points_copy[idx][2]
-            semiedge.set_helper((v, type_))
-
-            return (v, type_)
-
+            raise ValueError("The helper of the semiedge is None")
         else:
             return semiedge.helper
 
@@ -400,11 +383,18 @@ class SweepLineMonotonePoly:
         prev = semiedge.prev_edge.origin.point
         origin = semiedge.origin.point
         next_ = semiedge.next_.point
-        turn = Vector.calculate_turn(prev, origin, next_)
+        interior_is_to_the_right = False
+
+        #if i'm going down then the interior of the polygon is to the right of the segment
+        #otherwise the interior of the polygon is to the left of the segment,
+        #just by thinking of the way the polygon is drawn
+        if (prev < origin) and (origin < next_):
+            interior_is_to_the_right = True
+            print("Interior is to the right")
 
         #if the interior of the polygon is to the right of the segment (this means we have an anticlockwise 
         #turn) then
-        if turn == 1:
+        if interior_is_to_the_right:
             v, type_ = self.get_helper(semiedge.prev_edge)
 
             #if the helper of the previous segment is a merge vertex
@@ -461,14 +451,15 @@ class SweepLineMonotonePoly:
 
 
 
-    def run(self, plotting: bool = False) -> List[Vector]:
+    def run(self, plotting: bool = False) -> List[SemiEdge]:
 
         """
-            Run the line sweep algorithm.
+            Run the line sweep algorithm abstraction over the polygon, in 
+            order to make it a  y-monotone polygon.
 
             Returns:
             -----------
-                All the intersection points as a list of vectors.
+                A list of diagonals that turn the polygon into a y-monotone polygon.
         """
 
         # intersection points list
@@ -482,6 +473,9 @@ class SweepLineMonotonePoly:
         # used for delimitation of the sweepline width in the x axis
         self.leftmost_endpoint  = Vector.get_leftmost_point([v for v, s, t in self.event_points])
         self.rightmost_endpoint = Vector.get_rightmost_point([v for v, s, t in self.event_points])
+
+        if plotting:
+            self.plot_current_state()
 
         # we iterate over the endpoints
         while len(self.event_points) > 0:
@@ -516,15 +510,16 @@ class SweepLineMonotonePoly:
         PlotMonotonePolygon.plot_polygon(semiedges = self.semiedges,
                                          classifications=self.event_points_copy)
         #dashed sweepline
-        plt.plot([self.sweep_line.start[0], self.sweep_line.end[0]],
-                 [self.sweep_line.start[1], self.sweep_line.end[1]],
-                 color='red',
-                 linewidth=1.0,
-                 linestyle='--',
-                 alpha=1.0)
+        if self.sweep_line:
+            plt.plot([self.sweep_line.start[0], self.sweep_line.end[0]],
+                    [self.sweep_line.start[1], self.sweep_line.end[1]],
+                    color='red',
+                    linewidth=1.0,
+                    linestyle='--',
+                    alpha=1.0)
 
+        #dashed black diagonals
         if self.diagonals:
-            #dashed black diagonals
             for diagonal in self.diagonals:
                 plt.plot([diagonal.origin[0], diagonal.next_[0]],
                          [diagonal.origin[1], diagonal.next_[1]],
@@ -532,6 +527,10 @@ class SweepLineMonotonePoly:
                          linewidth=1.0,
                          linestyle='--',
                          alpha=1.0)
+        
+        #text for each vertex
+        for n in self.semiedges.list_of_nodes:
+            plt.text(n.point[0], n.point[1]+0.10, n.name, fontsize=12)
         
         PlotMonotonePolygon.show()
     
