@@ -19,6 +19,7 @@ class SemiEdge():
                   incident_face: Face = None, 
                   need_cast: bool = False):
 
+
         if need_cast:
             self.origin: GeometricNode = GeometricNode(origin)
             self.next_: GeometricNode = GeometricNode(next_)
@@ -28,11 +29,12 @@ class SemiEdge():
             self.next_: GeometricNode = next_
 
         self.seg: Segment = Segment(self.origin.point, self.next_.point)
-        self.twin: Segment = Segment(self.next_.point, self.origin.point)
         self.incident_face: Face = incident_face
 
+        #completely twisted version of self
         self.next_edge: SemiEdge = None
         self.prev_edge: SemiEdge = None
+        self.twin: SemiEdge = None
         
         # This is used for the triangulation, the literal part is a constant 
         # that indicates the helper vector type, this could be START_VERTEX,
@@ -55,6 +57,9 @@ class SemiEdge():
     
     def set_helper(self, helper: Tuple[Vector, int]) -> None:
         self.helper = helper
+
+    def set_twin(self, twin: 'SemiEdge') -> None:
+        self.twin = twin
 
     def __repr__(self) -> str:
         return f"{self.seg} {self.incident_face}"
@@ -81,7 +86,7 @@ class SemiEdgeList():
         self._build_nodes(list_of_points)
         self._build_semi_edges()
 
-    def add_semi_edges(self, semi_edges: List[SemiEdge]) -> None:
+    def add_new_semi_edges(self, semi_edges: List[SemiEdge]) -> None:
         """
             This function adds semi-edges to the list of semi-edges.
 
@@ -91,7 +96,9 @@ class SemiEdgeList():
             add the intersection point to the list of nodes, and add the new
             semi-edges that are created by the intersection.
         """
-        pass
+        
+        for semiedge in semi_edges:
+            self.add_new_edge(semiedge)
 
     def _build_nodes(self, list_of_points: List[Vector]) -> None:
         """
@@ -119,12 +126,22 @@ class SemiEdgeList():
         for i in range(len(self.list_of_nodes)):
             semi_edge = SemiEdge(origin = self.list_of_nodes[i], 
                                  next_ = self.list_of_nodes[(i+1)%len(self.list_of_nodes)])
+            twin = SemiEdge(origin = semi_edge.next_, 
+                            next_ = semi_edge.origin)
+
+            #handle twins mutually
+            semi_edge.set_twin(twin)
+            twin.set_twin(semi_edge)
+
             self.semi_edges.append(semi_edge)
 
         # Set the next and prev edges of each semi-edge
         for i in range(len(self.semi_edges)):
             self.semi_edges[i].set_next_edge(self.semi_edges[(i+1)%len(self.semi_edges)])
             self.semi_edges[i].set_prev_edge(self.semi_edges[(i-1)%len(self.semi_edges)])
+
+            self.semi_edges[i].twin.set_next_edge(self.semi_edges[(i-1)%len(self.semi_edges)])
+            self.semi_edges[i].twin.set_prev_edge(self.semi_edges[(i+1)%len(self.semi_edges)])
         
         # add faces to the semi-edges
         self._set_faces()
@@ -169,14 +186,90 @@ class SemiEdgeList():
                     # We add the face to the semi-edge
                     next_semi_edge.incident_face = face
 
+                face.set_face_type()
                 self.faces.append(face)
                 faces_count += 1
 
-    def reset_faces(self) -> None:
-        for semi_edge in self.semi_edges:
-            semi_edge.incident_face = None
+    def add_new_edge(self, semiedge: SemiEdge) -> None:
+
+        twin = SemiEdge(origin = semiedge.next_,
+                        next_  = semiedge.origin)
+
+        #identify the semiedges with origin in any of the ends 
+        #of the semiedge I want to add
+
+        #print(f"I want to add {semiedge}")
+        related_edges_orig = self.get_incident_edges_of_vertex(semiedge.origin)
+        related_edges_next = self.get_incident_edges_of_vertex(semiedge.next_)
+
+        #from those related edges filter the ones that have the same incident face and 
+        #that are exterior frontier 
+        related_edges_orig = [e for e in related_edges_orig if e.incident_face.face_type == Face.EXTERIOR_FACE]
+        related_edges_next = [e for e in related_edges_next if e.incident_face.face_type == Face.EXTERIOR_FACE]
+
+        related_edges = related_edges_orig + related_edges_next
+        found = False
+        pair: Tuple[SemiEdge, SemiEdge] = ()
+        #print(f"RELATED EDGES {related_edges}")
+
+        #search the pair that has the same incident face
+        for e1 in related_edges:
+            for e2 in related_edges:
+                if e1.incident_face == e2.incident_face:
+                    pair = (e1, e2)
+                    found = True
+                    break
+            if found:
+                break
+        
+        related_a = pair[0] if pair[0].origin == semiedge.origin else pair[1]
+        related_b = pair[1] if related_a == pair[0] else pair[0]
+        
+        #reset prev edge of existent edges in the polygon
+        related_a.prev_edge.set_next_edge(semiedge)
+        related_b.prev_edge.set_next_edge(twin)
+
+        #set the previous edges of the new semiedges
+        semiedge.set_prev_edge( related_a.prev_edge )
+        twin.set_prev_edge( related_b.prev_edge )
+
+        #set the next edges of the new semiedges 
+        semiedge.set_next_edge( related_b )
+        twin.set_next_edge( related_a )
+
+        #reset the prev edge of the existent edges in polygon
+        related_b.set_prev_edge(semiedge) 
+        related_a.set_prev_edge(twin) 
+
+        semiedge.twin = twin
+        self.semi_edges.append(semiedge)
+        
+        #reset the faces of the polygon
+        self._reset_faces()
+
+    def _reset_faces(self):
         self.faces = []
+
+        for s in self.semi_edges:
+            #remove the face from memory
+            del s.incident_face
+            del s.twin.incident_face
+
+            #remove the face from attributes
+            s.incident_face = None
+            s.twin.incident_face = None
+        
         self._set_faces()
+
+    def get_incident_edges_of_vertex(self, vertex: GeometricNode) -> List[SemiEdge]:
+
+        starts_at_vertex = []
+
+        for semiedge in self.semi_edges:
+            if semiedge.origin == vertex:
+                starts_at_vertex.append(semiedge)
+
+        return starts_at_vertex
 
     def __getitem__(self, index: int) -> SemiEdge:
         return self.semi_edges[index]

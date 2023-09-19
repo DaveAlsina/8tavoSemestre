@@ -31,7 +31,7 @@ class SweepLineMonotonePoly:
                 segments: list of segments to be processed.
         """
 
-        self.semiedges = semiedges
+        self.semiedges = deepcopy(semiedges)
         self.epsilon  = epsilon
         self.status_tree : Tree[Node1D]   = None 
         self.event_points : List[Vector]  = None 
@@ -352,10 +352,10 @@ class SweepLineMonotonePoly:
         #if the helper of the previous segment is a merge vertex
         #then we new a new diagonal from the vertex to the helper
         if type_ == MERGE_VERTEX:
-            self.diagonals.append(SemiEdge(v, vertex, need_cast=True))
+            self.diagonals.append(SemiEdge(vertex, v, need_cast=True))
         
         #remove the previous semiedge from the status tree
-        self.remove_from_status_tree(prev_semiedge) #AAAA
+        self.remove_from_status_tree(prev_semiedge) 
 
         #gets the segment that is just to the left of the segment
         semiedge_left = self.get_left_semiedge_of_vertex(vertex)
