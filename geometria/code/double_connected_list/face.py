@@ -18,6 +18,10 @@ class Face():
         self._name: str = name
         self.face_type: int = -1
     
+    @property
+    def name(self) -> str:
+        return self._name
+    
     def set_name(self, name: str) -> None:
         self._name = name
 
