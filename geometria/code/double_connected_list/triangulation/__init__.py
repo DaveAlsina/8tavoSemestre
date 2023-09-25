@@ -10,4 +10,4 @@ sys.path.append(parent_dir)
 sys.path.append(parent2_dir)
 
 
-from .sweep_line_to_monotone_polygon import SweepLine
+from .sweep_line_to_monotone_polygon import SweepLineMonotonePoly

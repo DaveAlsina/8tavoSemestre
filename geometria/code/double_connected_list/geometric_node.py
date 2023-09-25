@@ -32,6 +32,18 @@ class GeometricNode():
     
     def __repr__(self) -> str:
         return f"{self.name} {self.point}"
+    
+    def __lt__(self, other_node: 'GeometricNode') -> bool:
+        return self.point < other_node.point
+
+    def __le__(self, other_node: 'GeometricNode') -> bool:
+        return self.point <= other_node.point
+    
+    def __gt__(self, other_node: 'GeometricNode') -> bool:
+        return self.point > other_node.point
+
+    def __ge__(self, other_node: 'GeometricNode') -> bool:
+        return self.point >= other_node.point
 
     def __eq__(self, other_node: 'GeometricNode') -> bool:
         return self.point == other_node.point

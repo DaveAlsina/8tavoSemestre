@@ -69,12 +69,16 @@ class SemiEdge():
         self.name = name
 
     def __repr__(self) -> str:
-        #return f"{self.name} SemiEdge({self.origin.name},{self.next_.name}) {self.incident_face}"
-        return f"{self.name}"
+        if self.name != None:
+            return f"{self.name}"
+        else: 
+            return f"SE({self.origin}, {self.next_})"
     
     def __str__(self) -> str:
-        #return f"{self.name} SemiEdge({self.origin.name},{self.next_.name}) {self.incident_face}"
-        return f"{self.name}"
+        if self.name != None:
+            return f"{self.name}"
+        else: 
+            return f"SE({self.origin}, {self.next_})"
     
     def __eq__(self, semiedge: 'SemiEdge') -> bool:
         return self.seg == semiedge.seg 
