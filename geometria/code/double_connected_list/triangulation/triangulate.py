@@ -43,11 +43,11 @@ class Triangulate():
         self.diagonals: List[SemiEdge] = []
 
 
-    def convert_to_ymonotone(self):
+    def convert_to_ymonotone(self, plotting: bool = False):
         """
             Converts the polygon into a y-monotone polygon.
         """
-        diagonals: List[SemiEdge] = SweepLineMonotonePoly(self.semiedges).run(plotting=False)
+        diagonals: List[SemiEdge] = SweepLineMonotonePoly(self.semiedges).run(plotting=plotting)
         self.semiedges.add_new_semi_edges(diagonals)
 
     def get_vertex_chain(self, endpoint: GeometricNode, semiedge: SemiEdge) -> bool:
@@ -188,7 +188,7 @@ class Triangulate():
         self.vertex_stack.append((endpoint, semiedge))
 
 
-    def run(self, plotting: bool = False):
+    def run(self, plotting: bool = False, plotting_monotone: bool = False) -> List[SemiEdge]:
         """
             Apply the triangulation algorithm to the polygon.
         """
@@ -197,7 +197,7 @@ class Triangulate():
 
         #convert the polygon into a y-monotone polygon
         print("Converting to y-monotone...")
-        self.convert_to_ymonotone()
+        self.convert_to_ymonotone(plotting=plotting_monotone)
         print("="*50)
         print("*"*50)
         print("="*50)

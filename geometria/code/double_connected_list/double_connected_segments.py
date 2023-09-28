@@ -143,7 +143,12 @@ class SemiEdgeList():
         self.list_of_nodes = []
         for i in range(len(list_of_points)):
             node = GeometricNode(point = list_of_points[i], name = f"{self.name}N{i}")
-            self.list_of_nodes.append(node)
+
+            #avoid adding repeated nodes
+            if node not in self.list_of_nodes:
+                self.list_of_nodes.append(node)
+            else:
+                raise Exception("Repeated node, watch out!")
 
     def _build_semi_edges(self) -> List[SemiEdge]:
         """

@@ -22,9 +22,17 @@ vectors2 = Vector.cast_to_vector(*points2)
 #invert the order of the points
 vectors2 = vectors2[::-1]
 
+points3 = [np.array([9, -1]), np.array([8, 6]), np.array([7, -3]), np.array([6, 3]),
+              np.array([4, -4]), np.array([2, -4]), np.array([3, 4]), np.array([4, 2.5]),
+              np.array([5, 12]), np.array([7, 12]), np.array([10, 6]), np.array([9.5, 11]),
+              np.array([11, 15]), np.array([13, 15]), np.array([12, 10]), np.array([13, 3]),
+              np.array([11, 4]), np.array([10, -1])]
+vectors3 = Vector.cast_to_vector(*points3)
+vectors3 = vectors3[::-1]
+
 #------------------------------------------------------------
 
-semiedges = SemiEdgeList(vectors1, name = "S1")
+semiedges = SemiEdgeList(vectors3, name = "S1")
 #diagonals = SweepLineMonotonePoly(semiedges).run(plotting=False)
 #semiedges.add_new_semi_edges(diagonals)
 #semiedges.add_new_edge(diagonals[0])
@@ -36,7 +44,8 @@ semiedges = SemiEdgeList(vectors1, name = "S1")
 #PlotDoubleConnectedEdgeList.plot(semiedges)
 #PlotDoubleConnectedEdgeList.show()
 
+print(semiedges.show_data_structure())
 triangulate = Triangulate(semiedges)
-diagonals = triangulate.run(plotting=True)
+diagonals = triangulate.run(plotting=True, plotting_monotone=True)
 
 
