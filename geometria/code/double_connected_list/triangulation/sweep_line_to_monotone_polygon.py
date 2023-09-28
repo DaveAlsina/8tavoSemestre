@@ -464,7 +464,7 @@ class SweepLineMonotonePoly:
 
         # intersection points list
         self.count = 0
-        self.intersections = []
+        #self.intersections = []
 
         # we sort the endpoints
         self.event_points = self.sort_and_classify_endpoints()

@@ -86,6 +86,9 @@ class SemiEdge():
     def __ne__(self, semiedge: 'SemiEdge') -> bool:
         return self.seg != semiedge.seg
 
+    def __hash__(self) -> int:
+        return hash(self.seg)
+
 #------------------------------------------------------------------------------#
 class SemiEdgeList():
 
@@ -218,6 +221,7 @@ class SemiEdgeList():
                 # We add the face to the semi-edge
                 semi_edge.incident_face = face
                 next_semi_edge.incident_face = face
+                face.add_semi_edge(next_semi_edge)
 
                 # While the next semi-edge is not the initial semi-edge
                 while next_semi_edge != semi_edge:
@@ -229,11 +233,18 @@ class SemiEdgeList():
                     # We add the face to the semi-edge
                     next_semi_edge.incident_face = face
 
+                    # We add the semi-edge to the face
+                    face.add_semi_edge(next_semi_edge)
+
                 face.set_face_type()
                 self.faces.append(face)
                 faces_count += 1
 
     def add_new_edge(self, semiedge: SemiEdge) -> None:
+
+        #check if the semiedge is already in the list of semiedges
+        if semiedge in self.semi_edges:
+            return
 
         twin = SemiEdge(origin = semiedge.next_,
                         next_  = semiedge.origin)
@@ -269,6 +280,9 @@ class SemiEdgeList():
                     break
             if found:
                 break
+
+        if not found:
+            raise Exception("No pair of edges found")
         
         related_a = pair[0] if pair[0].origin == semiedge.origin else pair[1]
         related_b = pair[1] if related_a == pair[0] else pair[0]

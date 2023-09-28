@@ -37,6 +37,6 @@ semiedges = SemiEdgeList(vectors1, name = "S1")
 #PlotDoubleConnectedEdgeList.show()
 
 triangulate = Triangulate(semiedges)
-triangulate.run()
+diagonals = triangulate.run(plotting=True)
 
 

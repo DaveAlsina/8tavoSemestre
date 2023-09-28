@@ -27,6 +27,17 @@ class GeometricNode():
         self.point = point
         self.incident_edge = incident_edge
 
+    @property
+    def x(self) -> float:
+        return float(self.point[0])
+    
+    @property
+    def y(self) -> float:
+        return float(self.point[1])
+
+    def __hash__(self) -> int:
+        return hash(self.point)
+
     def __getitem__(self, index: int) -> float:
         return float(self.point[index])
     
