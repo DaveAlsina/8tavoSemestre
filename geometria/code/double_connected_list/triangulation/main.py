@@ -1,5 +1,6 @@
 import os, sys
 import numpy as np
+from matplotlib import pyplot as plt
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -46,6 +47,21 @@ semiedges = SemiEdgeList(vectors3, name = "S1")
 
 print(semiedges.show_data_structure())
 triangulate = Triangulate(semiedges)
-diagonals = triangulate.run(plotting=True, plotting_monotone=True)
+semiedges, diagonals = triangulate.run(plotting=False, plotting_monotone=False)
+
+
+for diagonal in diagonals:
+
+    print(f"typeof(diagonal): {type(diagonal)}")
+    #plot the diagonal I want to add in orange
+    PlotDoubleConnectedEdgeList.plot(semiedges)
+    plt.plot([diagonal.origin.x, diagonal.next_.x], [diagonal.origin.y, diagonal.next_.y], color="orange")
+    PlotDoubleConnectedEdgeList.show()
+
+    semiedges.add_new_edge(diagonal)
+    print(semiedges.show_data_structure())
+    PlotDoubleConnectedEdgeList.plot(semiedges)
+    PlotDoubleConnectedEdgeList.show()
+    print("\n\n")
 
 

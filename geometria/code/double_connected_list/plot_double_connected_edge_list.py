@@ -45,6 +45,45 @@ class PlotDoubleConnectedEdgeList():
                      semiedge.origin.name,
                      fontsize = 10)
 
+            #add name of the semi-edge to the plot, in the middle of the semi-edge and a little bit 
+            #to the right of the semi-edge, in purple
+            semiedge_center = [(semiedge.start[0] + semiedge.end[0])/2, (semiedge.start[1] + semiedge.end[1])/2]
+
+            plt.text( semiedge_center[0] + offset,
+                      semiedge_center[1] + 0,
+                       semiedge.name,
+                       fontsize = 10,
+                       color = 'purple')
+
+
+        #plot the faces
+        if semiedges.faces:
+            PlotDoubleConnectedEdgeList.plot_faces(semiedges)
+
+    
+
+    @staticmethod
+    def plot_faces(semiedges: SemiEdgeList):
+        offset = 0.05
+
+        for face in semiedges.faces:
+
+            #calculate the center of the face
+            #the center is the average of the coordinates of the vertices of the face
+
+            center = [0, 0]
+            for semiedge in face.semi_edges:
+                center[0] += semiedge.origin.x
+                center[1] += semiedge.origin.y
+            
+            center[0] /= len(face.semi_edges)
+            center[1] /= len(face.semi_edges)
+
+            #plot the center of the face
+            plt.scatter(center[0], center[1], color = 'blue', s = 40)
+            plt.text(center[0], center[1]+offset, face.name, fontsize = 10)
+
+
     @staticmethod
     def show() -> None:
         plt.show()

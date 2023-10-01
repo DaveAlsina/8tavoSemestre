@@ -261,7 +261,7 @@ class SemiEdgeList():
         #identify the semiedges with origin in any of the ends 
         #of the semiedge I want to add
 
-        #print(f"I want to add {semiedge}")
+        print(f"I want to add {semiedge}, {semiedge.seg}")
         related_edges_orig = self.get_incident_edges_of_vertex(semiedge.origin)
         related_edges_next = self.get_incident_edges_of_vertex(semiedge.next_)
 
@@ -273,7 +273,7 @@ class SemiEdgeList():
         related_edges = related_edges_orig + related_edges_next
         found = False
         pair: Tuple[SemiEdge, SemiEdge] = ()
-        #print(f"RELATED EDGES {related_edges}")
+        print(f"RELATED EDGES {related_edges}")
 
         #search the pair that has the same incident face
         for e1 in related_edges:
