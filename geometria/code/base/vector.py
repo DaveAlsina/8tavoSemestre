@@ -1,4 +1,3 @@
-import math
 import numpy as np 
 from typing import Union, List, Tuple
 
@@ -7,6 +6,14 @@ from typing import Union, List, Tuple
 # - unpacking operator (*), to pass a variable number of arguments to a function
 
 class Vector:
+    TURN_LEFT = 1
+    TURN_RIGHT = -1
+    TURN_NONE = 0
+
+    CLOCKWISE_TURN = TURN_RIGHT
+    ANTICLOCKWISE_TURN = TURN_LEFT
+
+
     def __init__(self, vector: np.ndarray):
         
         #it's a column vector

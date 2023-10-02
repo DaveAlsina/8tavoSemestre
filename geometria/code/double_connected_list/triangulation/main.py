@@ -20,8 +20,6 @@ vectors1 = Vector.cast_to_vector(*points1)
 points2 = [np.array([5, 1]), np.array([8, 3]), np.array([5, -2]),
            np.array([2, 2]), np.array([-1, -1]), np.array([1, 5])]
 vectors2 = Vector.cast_to_vector(*points2)
-#invert the order of the points
-vectors2 = vectors2[::-1]
 
 points3 = [np.array([9, -1]), np.array([8, 6]), np.array([7, -3]), np.array([6, 3]),
               np.array([4, -4]), np.array([2, -4]), np.array([3, 4]), np.array([4, 2.5]),
@@ -29,7 +27,6 @@ points3 = [np.array([9, -1]), np.array([8, 6]), np.array([7, -3]), np.array([6, 
               np.array([11, 15]), np.array([13, 15]), np.array([12, 10]), np.array([13, 3]),
               np.array([11, 4]), np.array([10, -1])]
 vectors3 = Vector.cast_to_vector(*points3)
-vectors3 = vectors3[::-1]
 
 #------------------------------------------------------------
 
@@ -63,5 +60,3 @@ for diagonal in diagonals:
     PlotDoubleConnectedEdgeList.plot(semiedges)
     PlotDoubleConnectedEdgeList.show()
     print("\n\n")
-
-

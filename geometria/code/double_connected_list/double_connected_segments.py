@@ -99,9 +99,35 @@ class SemiEdgeList():
         self.faces : List[Face] = []
         self.name = name
         
+        self._fix_orientation(list_of_points)
         self._build_nodes(list_of_points)
         self._build_semi_edges()
     
+    def _fix_orientation(self, list_of_points: List[Vector]) -> None:
+        """
+            This method reverses the orientation of the polygon if it's clockwise.
+            Otherwise, it does nothing.
+        """
+
+        #get the leftmost point of the polygon which is one of the points of the
+        #convex hull, by looking at the prev and next points of the leftmost point
+        #and then computing the turn of the three points (prev, leftmost, next)
+        #we can determine if the polygon is clockwise or counterclockwise
+        envelope_component = Vector.get_leftmost_point(list_of_points)
+
+        #get the index of the leftmost point
+        index = list_of_points.index(envelope_component)
+
+        #get the prev and next points of the leftmost point
+        prev_point = list_of_points[(index-1)%len(list_of_points)]
+        next_point = list_of_points[(index+1)%len(list_of_points)]
+
+        #get the turn of the three points
+        turn = Vector.calculate_turn(prev_point, envelope_component, next_point)
+
+        if turn == Vector.CLOCKWISE_TURN:
+            list_of_points.reverse()
+
     def show_data_structure(self) -> pd.DataFrame:
         df = pd.DataFrame(columns = ["name", "origin", "next", "prev_edge", "next_edge", "twin", "prev_edge_twin", "next_edge_twin", "incident_face"])
 
@@ -135,12 +161,16 @@ class SemiEdgeList():
         for semiedge in semi_edges:
             self.add_new_edge(semiedge)
 
+
     def _build_nodes(self, list_of_points: List[Vector]) -> None:
         """
             This function builds the nodes from a list of points.
             The name of each node is the index of the point in the list of points.
         """
         self.list_of_nodes = []
+
+        #
+
         for i in range(len(list_of_points)):
             node = GeometricNode(point = list_of_points[i], name = f"{self.name}N{i}")
 
@@ -183,29 +213,57 @@ class SemiEdgeList():
             self.semi_edges[i].set_next_edge(self.semi_edges[(i+1)%len(self.semi_edges)])
             self.semi_edges[i].set_prev_edge(self.semi_edges[(i-1)%len(self.semi_edges)])
 
-            twin_next = SemiEdge(origin = self.semi_edges[i].prev_edge.next_,
-                                 next_ = self.semi_edges[i].prev_edge.origin)
-            twin_prev = SemiEdge(origin = self.semi_edges[i].next_edge.next_,
-                                 next_ = self.semi_edges[i].next_edge.origin)
-
-            twin_next.set_name(f"{self.semi_edges[i].prev_edge.name}''")
-            twin_prev.set_name(f"{self.semi_edges[i].next_edge.name}''")
-
-            self.semi_edges[i].twin.set_next_edge(twin_next)
-            self.semi_edges[i].twin.set_prev_edge(twin_prev)
+        # Set the next and prev edges of each twin semi-edge
+        for i in range(len(self.semi_edges)):
+            self.semi_edges[i].twin.set_next_edge(self.semi_edges[(i-1)%len(self.semi_edges)].twin) 
+            self.semi_edges[i].twin.set_prev_edge(self.semi_edges[(i+1)%len(self.semi_edges)].twin)
         
         # add faces to the semi-edges
         self._set_faces(self.semi_edges)
+        self._set_faces(self.semi_edges, twins=True)
 
         return self.semi_edges
 
-    def _set_faces(self, edges: List[SemiEdge]) -> None:
+    def _reset_faces(self):
+        """
+            This function resets the faces of the polygon.
+            This is necessary because when we add a new edge, we have to
+            reset the faces of the polygon, because the faces are not correct
+            anymore.
+        """
+        self.faces = []
+
+        for s in self.semi_edges:
+            #remove the face from memory
+            del s.incident_face
+            del s.twin.incident_face
+
+            #remove the face from attributes
+            s.incident_face = None
+            s.twin.incident_face = None
+        
+        self._set_faces(self.semi_edges)
+        self._set_faces(self.semi_edges, twins=True)
+
+    def _set_faces(self, 
+                   edges: List[SemiEdge], 
+                   twins: bool = False) -> None:
         """
             This function adds the faces to the semi-edges.
 
             The idea is to take a semi-edge, and iter to the next semi-edge until
             we reach the initial semi-edge. All the semi-edges that we visited until 
             reaching the initial semi-edge form a face.
+
+            Input:
+            --------
+                edges: List[SemiEdge]
+                    The list of semi-edges to which we want to add the faces
+                
+                twins: bool
+                    If True, then it's referring to add the faces to the twins of the
+                    semi-edges. If False, then it's referring to add the faces to the
+                    semi-edges.
         """
 
         faces_count = 0
@@ -213,19 +271,30 @@ class SemiEdgeList():
         # We iterate over the semi-edges
         for semi_edge in edges:
 
+            if twins:
+                semi_edge = semi_edge.twin
+
             #print(f"iterating over semi-edge {semi_edge}, face: {semi_edge.incident_face}, face_count: {faces_count}")
             # If the semi-edge doesn't have a face, then we add a face
             if semi_edge.incident_face == None:
+                
                 # We create a new face
-                face = Face(name = f"{self.name}:F{faces_count}")
+                if twins:
+                    face_name = f"{semi_edge.twin.name}''" #name for twin face
+                else:
+                    face_name = f"{self.name}:F{faces_count}" #name for face
+
+                face = Face(name = face_name)
+
+                # We iterate over the next semi-edge
+                next_semi_edge = semi_edge.next_edge
+
+                # We set the face to the semi-edge
+                semi_edge.incident_face = face
+                next_semi_edge.incident_face = face
 
                 # We add the semi-edge to the face
                 face.add_semi_edge(semi_edge)
-                # We iterate over the next semi-edge
-                next_semi_edge = semi_edge.next_edge
-                # We add the face to the semi-edge
-                semi_edge.incident_face = face
-                next_semi_edge.incident_face = face
                 face.add_semi_edge(next_semi_edge)
 
                 # While the next semi-edge is not the initial semi-edge
@@ -242,13 +311,21 @@ class SemiEdgeList():
                     face.add_semi_edge(next_semi_edge)
 
                 face.set_face_type()
-                self.faces.append(face)
                 faces_count += 1
 
+                if not twins:
+                    self.faces.append(face)
+
     def add_new_edge(self, semiedge: SemiEdge) -> None:
+        """
+            This function adds a new edge to the list of semi-edges.
+            This is a delicate process, because with each semi-edge we add
+            it's necessary to add the next and prev edges of each semi-edge.
+        """
 
         #check if the semiedge is already in the list of semiedges
         if semiedge in self.semi_edges:
+            print("The semiedge is already in the list of semiedges")
             return
 
         twin = SemiEdge(origin = semiedge.next_,
@@ -321,28 +398,30 @@ class SemiEdgeList():
         self._reset_faces()
 
     def get_incident_edges_of_vertex(self, vertex: GeometricNode) -> List[SemiEdge]:
+        """
+            This function returns the edges that have the vertex as origin.
+
+            Input:
+            -------
+                vertex: GeometricNode
+                    The vertex to which the edges start
+
+            Output:
+            -------
+                starts_at_vertex: List[SemiEdge]
+                    The list of edges that start at the vertex
+        """
 
         starts_at_vertex = []
 
         for semiedge in self.semi_edges:
             if semiedge.origin == vertex:
                 starts_at_vertex.append(semiedge)
+            elif semiedge.twin.origin == vertex:
+                starts_at_vertex.append(semiedge.twin)
 
         return starts_at_vertex
 
-    def _reset_faces(self):
-        self.faces = []
-
-        for s in self.semi_edges:
-            #remove the face from memory
-            del s.incident_face
-            del s.twin.incident_face
-
-            #remove the face from attributes
-            s.incident_face = None
-            s.twin.incident_face = None
-        
-        self._set_faces(self.semi_edges)
 
     def __getitem__(self, index: int) -> SemiEdge:
         return self.semi_edges[index]
