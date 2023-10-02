@@ -188,7 +188,7 @@ class Triangulate():
         self.vertex_stack.append((endpoint, semiedge))
 
 
-    def run(self, plotting: bool = False, plotting_monotone: bool = False) -> Tuple[List[SemiEdge], List[SemiEdge]]:
+    def run(self, plotting: bool = False, plotting_monotone: bool = False) -> Tuple[SemiEdgeList, List[SemiEdge]]:
         """
             Apply the triangulation algorithm to the polygon.
         """

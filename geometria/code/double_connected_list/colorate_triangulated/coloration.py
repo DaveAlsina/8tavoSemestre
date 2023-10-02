@@ -1,4 +1,5 @@
 import os, sys
+import matplotlib as mpl
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -12,6 +13,7 @@ from matplotlib import pyplot as plt
 from double_connected_list.face import Face
 from double_connected_list.geometric_node import GeometricNode
 from double_connected_list.double_connected_segments import SemiEdge, SemiEdgeList
+from double_connected_list.plot_double_connected_edge_list import PlotDoubleConnectedEdgeList
 
 
 class TriangulationColoring:
@@ -36,9 +38,18 @@ class TriangulationColoring:
 
             #if the node is not colored, then color it
             else:
-                self.choose_color_from_available_colors(available_colors)
+                color = self.choose_color_from_available_colors(available_colors)
+                #if there are available colors, then color the node
+                if color is not None:
+                    node.set_color(color)
+                
+                #if there are no available colors, then raise an exception
+                else:
+                    raise Exception("There are no available colors for coloring the node.")
 
-
+            #plot the current state
+            if self.plotting:
+                self.plot_current_state()
                 
     def choose_color_from_available_colors(self, available_colors: List[int]) -> int:
         """
@@ -73,7 +84,7 @@ class TriangulationColoring:
         else:
 
             #find the color that is used the least
-            color = min(self.color_count, key=self.color_count.get)
+            color = max(self.color_count, key=self.color_count.get)
 
             #increase the color count
             self.color_count[color] += 1
@@ -97,6 +108,7 @@ class TriangulationColoring:
                     The available colors for coloring the input node.
         """
         
+        print(f"Analizing node = {node}")
         #available colors
         colors = set([GeometricNode.COLOR1, GeometricNode.COLOR2, GeometricNode.COLOR3])
 
@@ -107,7 +119,8 @@ class TriangulationColoring:
         used_colors = set()
 
         for incident_edge in incident_edges:
-            used_colors.add(incident_edge.origin.color)
+            print(f"incident_edge = {incident_edge}, next node color = {incident_edge.next_.color}")
+            used_colors.add(incident_edge.next_.color)
 
         #available colors
         available_colors = colors - used_colors
@@ -115,3 +128,36 @@ class TriangulationColoring:
         return list(available_colors)
 
 
+    def run(self, plotting: bool = False) -> SemiEdgeList:
+        """
+            This method runs the coloring algorithm.
+
+            Output:
+            -------------------
+                semiedges: SemiEdgeList
+                    The colored nodes of the semiedge list.
+        """
+
+        #plot the current state
+        self.plotting = plotting
+
+        #color the nodes
+        self.breadth_first_search()
+
+        return self.semiedges
+
+    def plot_current_state(self, cmap = 'viridis'):
+        PlotDoubleConnectedEdgeList.plot(self.semiedges)
+
+        colormap = mpl.colormaps[cmap].resampled(50)
+        main_colors = [colormap(0.33), colormap(0.66), colormap(0.99)]
+
+        #plot the colors of the nodes
+        for node in self.semiedges.list_of_nodes:
+            
+            if node.color is not None:
+                color = main_colors[node.color]
+                print(f"Node {node} is colored with color {node.color}. color = {color}")
+                plt.scatter(node.x, node.y, color=color, s=40)
+
+        plt.show()

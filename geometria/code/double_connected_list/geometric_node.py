@@ -13,9 +13,9 @@ class GeometricNode():
         This class represents a node in a double connected edge list.
     """
 
-    COLOR1 = 1
-    COLOR2 = 2
-    COLOR3 = 3
+    COLOR1 = 0
+    COLOR2 = 1
+    COLOR3 = 2
 
     def __init__(self,
                  point: Vector,
