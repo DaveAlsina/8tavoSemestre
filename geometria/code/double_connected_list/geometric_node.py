@@ -13,6 +13,10 @@ class GeometricNode():
         This class represents a node in a double connected edge list.
     """
 
+    COLOR1 = 1
+    COLOR2 = 2
+    COLOR3 = 3
+
     def __init__(self,
                  point: Vector,
                  name: str = None, 
@@ -26,6 +30,7 @@ class GeometricNode():
         self.value = None
         self.point = point
         self.incident_edge = incident_edge
+        self.color: int = None
 
     @property
     def x(self) -> float:
@@ -34,6 +39,9 @@ class GeometricNode():
     @property
     def y(self) -> float:
         return float(self.point[1])
+
+    def set_color(self, color: int) -> None:
+        self.color = color
 
     def __hash__(self) -> int:
         return hash(self.point)
