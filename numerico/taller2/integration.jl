@@ -197,3 +197,32 @@ function romberg_approx(f::Function, x0::Float64, x1::Float64, n::Integer)::Floa
     return r[1]
 end
 
+#----------
+function adaptative_integral(f::Function, 
+                             a::Float64, 
+                             b::Float64,
+                             tol::Float64, 
+                             error_type::Bool = true)::Float64
+
+
+    #c is the midpoint of the interval [a, b]
+    c = (a + b)/2
+
+    #simpson's rule approximation in the interval [a, b]
+    S1 = simpson_fraction_rule_approx(f, a, b)
+
+    #simpson's rule approximation in the interval [a, c] and [c, b]
+    S2 = simpson_fraction_rule_approx(f, a, c) + simpson_fraction_rule_approx(f, c, b)
+
+    if error_metric(S1, S2, error_type) < tol
+        #simpson extrapolation
+        return S2 + (S2 - S1)/15 
+    else
+        #recursive split into two intervals and repeat
+        Q1 = adaptative_integral(f, a, c, tol)
+        Q2 = adaptative_integral(f, c, b, tol)
+
+        return Q1 + Q2
+    end
+
+end
