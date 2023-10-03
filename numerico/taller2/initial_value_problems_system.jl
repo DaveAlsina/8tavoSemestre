@@ -11,6 +11,8 @@ function RKsystem(f::Function,
                   error_type::Bool = true,
                   parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}}
 
+    y1_new = rk4_iteration(f,x0,y0,h)
+
 
         
 

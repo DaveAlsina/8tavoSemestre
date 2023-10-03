@@ -238,18 +238,10 @@ function runge_kutta_fehlberg(f::Function,
 
     points = []
     h = h_max
-    count = 0
 
     x_new = x
     while x_new < n 
                 
-        if count == 0
-            verbose = true
-            count = 1
-        else
-            verbose = false
-        end
-
         y_new, y_high_ord_new = runge_kutta_fehlberg_iteration(f, x, y, h, verbose)
         x_new = x + h
         R = error_metric(y_new, y_high_ord_new, is_absolute)        
@@ -280,6 +272,34 @@ end
 # ----------------------------------------------------------------------- #
 #                      Runge-Kutta 4th order method                       #
 # ----------------------------------------------------------------------- #
+
+function rk4_iteration(f::Function, x::Float64, y::Float64, h::Float64)::Float64
+    """
+        This function solves the initial value problem, using the Runge-Kutta 4th order method.
+        
+        Input:
+        -------
+
+            - f: the function derivative y', from which we want to get f(x,y)
+            - x: the initial x value
+            - y: the initial y value
+            - h: the step size
+
+        Output:
+        -------
+
+            - y_new: the new y value
+    """
+
+    k1 = h * f(x, y)
+    k2 = h * f(x + h / 2, y + k1 / 2)
+    k3 = h * f(x + h / 2, y + k2 / 2)
+    k4 = h * f(x + h, y + k3)
+
+    y_new = y + (k1 + 2 * k2 + 2 * k3 + k4) / 6
+
+    return y_new
+end
 
 function runge_kutta_4(f::Function,
                        x0::Float64,
