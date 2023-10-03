@@ -49,6 +49,53 @@ function euler_method(df::Function,
     return x, y
 end
 
+function euler_method(df::Function,
+                      x0::Float64, 
+                      y0::Float64,
+                      a::Float64,
+                      b::Float64,
+                      h::Float64)::Tuple{Array{Float64,1},Array{Float64,1}}
+    
+    """
+    This function solves the initial value problem
+    y' = f(x,y), y(x0) = y0
+    using the Euler method.
+
+    Input:
+    ------------------
+        - df: the function derivative y', from which we want to get f(x,y)
+        - x0: the initial x value
+        - y0: the initial y value
+        - a: the left endpoint of the interval
+        - b: the right endpoint of the interval
+        - n: the number of subintervals
+
+    Output:
+    ------------------
+        - x: the x values of the solution
+        - y: the y values of the solution
+    """
+    
+    epsilon = h
+    n = Int64((b-a)/epsilon)
+    
+    # Initialize the solution vector
+    y = zeros(n+1)
+    y[1] = y0
+
+    # Initialize the x vector
+    x = zeros(n+1)
+    x[1] = x0
+
+    for i in 1:n
+        y[i+1] = y[i] + epsilon*df(x[i], y[i])
+        x[i+1] = i*epsilon + x0
+    end
+
+    return x, y
+end
+
+
 # ----------------------------------------------------------------------- #
 #                      Taylor Superior Order Method                       #
 # ----------------------------------------------------------------------- #
@@ -164,7 +211,7 @@ function runge_kutta_fehlberg(f::Function,
                               h_min::Float64,
                               n::Int,
                               tol::Float64,
-                              is_absolute::Bool)::vector{vector{Float64}}
+                              is_absolute::Bool)::Tuple{Array{Float64,1},Array{Float64,1}}
     """
         This function solves the initial value problem, using the Runge-Kutta-Fehlberg method.
         
@@ -225,7 +272,8 @@ function runge_kutta_fehlberg(f::Function,
         push!(points, [x, y])
     end
 
-     return points
+     #return points
+     return [points[i][1] for i in 1:length(points)], [points[i][2] for i in 1:length(points)]
 end
 
 
@@ -237,8 +285,9 @@ function runge_kutta_4(f::Function,
                        x0::Float64,
                        y0::Float64,
                        h::Float64,
-                       tol::Float64, 
-                       error_type::Bool = true)::Vector{Vector{Float64}}
+                       tol::Float64;
+                       error_type::Bool = true,
+                       parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}}
     
     """
         This function solves the initial value problem, using the Runge-Kutta 4th order method.
@@ -275,9 +324,15 @@ function runge_kutta_4(f::Function,
 
         push!(points, [x_new,y_new])
 
-        #parade condition
-        if (error_metric(y_new, y, error_type) <= tol)  
-            break
+        #parade conditions
+        if isnothing(parade_condition)
+            if error_metric(y_new, y, error_type) < tol
+                break
+            end
+        else
+            if parade_condition(x, x_new, y, y_new)
+                break
+            end
         end
 
         y = y_new
@@ -285,7 +340,8 @@ function runge_kutta_4(f::Function,
 
     end
 
-    return points
+    #return points
+    return [points[i][1] for i in 1:length(points)], [points[i][2] for i in 1:length(points)]
 end
 
 # ----------------------------------------------------------------------- #
@@ -296,8 +352,9 @@ function runge_kutta_3(f::Function,
                        x0::Float64,
                        y0::Float64,
                        h::Float64,
-                       tol::Float64, 
-                       error_type::Bool = true)::Vector{Vector{Float64}}
+                       tol::Float64;
+                       error_type::Bool = true, 
+                       parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}}
     """
         This function solves the initial value problem, using the Runge-Kutta 3th order method.
         
@@ -328,19 +385,27 @@ function runge_kutta_3(f::Function,
         x_new = x + h
         y_new = y + h/2* (f(x,y) + f(x_new,y+h*f(x,y)))
 
+        #parade conditions
+        if isnothing(parade_condition)
+            if error_metric(y_new, y, error_type) < tol
+                break
+            end
+        else
+            if parade_condition(x, x_new, y, y_new)
+                break
+            end
+        end
+
         y = y_new
         x = x_new
 
         push!(points, [x,y])
         
-        #parade condition
-        if error_metric(y_new, y, error_type) < tol
-            break
-        end
         
     end
 
-    return points
+    #return points
+    return [points[i][1] for i in 1:length(points)], [points[i][2] for i in 1:length(points)]
 end
 
 # ----------------------------------------------------------------------- #
@@ -351,8 +416,9 @@ function runge_kutta_2(f::Function,
                        x0::Float64,
                        y0::Float64,
                        h::Float64,
-                       tol::Float64,
-                       error_type::Bool = true)::vector{vector{float64}}
+                       tol::Float64;
+                       error_type::Bool = true,
+                       parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}}
     """
         This function solves the initial value problem, using the Runge-Kutta 2th order method.
         
@@ -383,16 +449,23 @@ function runge_kutta_2(f::Function,
         y_new = y + h * f(x + h / 2, y + h / 2 * f(x, y))    
         x_new = x + h
 
+        #parade conditions
+        if isnothing(parade_condition)
+            if error_metric(y_new, y, error_type) < tol
+                break
+            end
+        else
+            if parade_condition(x, x_new, y, y_new)
+                break
+            end
+        end
+    
         y = y_new
         x = x_new
 
         push!(points, [x,y])
-        
-        #parade condition
-        if error_metric(y_new, y, error_type) < tol
-            break
-        end
     end
 
-    return points
+    #return points
+    return [points[i][1] for i in 1:length(points)], [points[i][2] for i in 1:length(points)]
 end
