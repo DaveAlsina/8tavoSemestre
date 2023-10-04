@@ -156,7 +156,7 @@ end
 #                      Runge-Kutta-Fehlberg method                        #
 # ----------------------------------------------------------------------- #
 
-function runge_kutta_fehlberg_iteration(f::Function, x::Float64, y::Float64, h::Float64, verbose::Bool = false)::vector{float64}
+function runge_kutta_fehlberg_iteration(f::Function, x::Float64, y::Float64, h::Float64, verbose::Bool = false)::Tuple{Float64, Float64}
     
     """
         This function solves the initial value problem, using the Runge-Kutta-Fehlberg method.
@@ -208,8 +208,7 @@ function runge_kutta_fehlberg(f::Function,
                               x0::Float64,
                               y0::Float64,
                               h_max::Float64,
-                              h_min::Float64,
-                              n::Int,
+                              upper_bound::Float64,
                               tol::Float64,
                               is_absolute::Bool)::Tuple{Array{Float64,1},Array{Float64,1}}
     """
@@ -222,7 +221,6 @@ function runge_kutta_fehlberg(f::Function,
             - x0: the initial x value
             - y0: the initial y value
             - h_max: the maximum step size
-            - h_min: the minimum step size
             - n: the number of subintervals
             - tol: the tolerance
             - is_absolute: if true, the error metric is the absolute error, otherwise is the relative error
@@ -240,9 +238,9 @@ function runge_kutta_fehlberg(f::Function,
     h = h_max
 
     x_new = x
-    while x_new < n 
+    while x < upper_bound 
                 
-        y_new, y_high_ord_new = runge_kutta_fehlberg_iteration(f, x, y, h, verbose)
+        y_new, y_high_ord_new = runge_kutta_fehlberg_iteration(f, x, y, h)
         x_new = x + h
         R = error_metric(y_new, y_high_ord_new, is_absolute)        
 
@@ -250,10 +248,6 @@ function runge_kutta_fehlberg(f::Function,
             q = 0.84* ((tol*h)/(R))^(1/4) 
             h = q*h
             
-            if h < h_min
-                error("h_min is too high")
-            end
-
             y_new, y_high_ord_new = runge_kutta_fehlberg_iteration(f, x_new, y_new, h)
             x_new = x_new + h
             R = error_metric(y_new, y_high_ord_new, is_absolute)
