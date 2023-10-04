@@ -3,63 +3,62 @@ include("initial_value_problems.jl")
 #                          Systems of Equations                           #
 # ----------------------------------------------------------------------- #
 
-function RKsystem(fns::Array{Function,1},
-                  x0::Float64,
-                  y0::Float64,
-                  h::Float64,
-                  tol::Float64;
+function RKsystem(f1::Function,
+                  f2::Function,
+                  y1::Float64,
+                  y2::Float64,
+                  tstart::Float64,
+                  tend::Float64,
+                  h::Float64;
                   error_type::Bool = true,
-                  parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}}
+                  parade_condition = nothing)::Tuple{Array{Float64,1},Array{Float64,1}, Array{Float64,1}}
 
-    len = length(fns)
 
-    # Initialize the solution arrays
-    # it contains [[t0, y0, y1, ..., yn], ...]
-    solution_array = []
+    # Initial values
+    t = tstart
 
-    while true
-        # Initialize the solution array for the current step
-        # it contains [t0, y0, y1, ..., yn]
-        solution = [x0, y0]
+    # Arrays to store the results
+    ys1 = [y1,]
+    ys2 = [y2,]
+    ts = [t,]
 
-        # Initialize the k arrays
-        k = zeros(len, 4)
+    # Iteration counter
+    i = 1
 
-        # Calculate the k arrays
-        for i in 1:4
-            k[:,i] = h .* fns(solution[1], solution[2:end]...)
-            solution[2:end] += k[:,i] ./ 6
-            solution[1] += h
-        end
+    while true 
 
-        # Calculate the error
-        if error_type
-            error = abs(k[:,1] - k[:,2] - k[:,3] + k[:,4]) ./ 6
-        else
-            error = abs(k[:,1] - k[:,2]) ./ 6
-        end
+        in1 = (t, y1, y2)
+        k1y1 = f1(in1...)*h
+        k1y2 = f2(in1...)*h
 
-        # Check the error
-        if maximum(error) <= tol
-            # Append the solution to the solution array
-            push!(solution_array, solution)
+        in2 = (t + h/2, y1 + (k1y1/2), y2 + (k1y2/2))
+        k2y1 = f1(in2...)*h
+        k2y2 = f2(in2...)*h
 
-            # Update the initial values
-            x0 = solution[1]
-            y0 = solution[2:end]
+        in3 = (t + h/2, y1 + (k2y1/2), y2 + (k2y2/2))
+        k3y1 = f1(in3...)*h
+        k3y2 = f2(in3...)*h
 
-            # Check the parade condition
-            if parade_condition != nothing
-                if parade_condition(x0, y0...)
-                    break
-                end
+        in4 = (t + h, y1 + k3y1, y2 + k3y2)
+        k4y1 = f1(in4...)*h
+        k4y2 = f2(in4...)*h
+
+        y1 += (k1y1 + 2*k2y1 + 2*k3y1 + k4y1)/6
+        y2 += (k1y2 + 2*k2y2 + 2*k3y2 + k4y2)/6
+        t += h
+
+        push!(ys1, y1)
+        push!(ys2, y2)
+        push!(ts, t)
+
+        if !isnothing(parade_condition)
+            if parade_condition(t, y1, y2)
+                break
             end
         end
 
-        # Update the step size
-        h = h * (tol / maximum(error))^(1/4)
+        i += 1
     end
-        
 
-
+    return (ts, ys1, ys2)
 end
