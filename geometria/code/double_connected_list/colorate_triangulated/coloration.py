@@ -29,7 +29,7 @@ class TriangulationColoring:
 
     def breadth_first_search(self):
 
-        nodes = self.update_queue()
+        nodes = self.update_queue(True)
 
         while nodes:#self.semiedges.list_of_nodes:
             
@@ -60,6 +60,7 @@ class TriangulationColoring:
                     #raise Exception("There are no available colors for coloring the node.")
                     print(f"\nThere are no available colors for coloring the node {node}.")
                     self.handle_problematic_node(node)
+                    self.update_node(node)
 
             print(f"Node {node} is colored with color {node.color}. color = {color}")
             print()
@@ -113,13 +114,13 @@ class TriangulationColoring:
 
         #color each node in the queue with the first available color
         while queue:
-            node = queue.pop(0)
+            next_node = queue.pop(0)
 
-            available_colors = self.check_neighboring_node(node)
+            available_colors = self.check_neighboring_node(next_node)
             color = self.choose_color_from_available_colors(available_colors)
 
-            node.set_color(color)
-            self.update_node(node)
+            next_node.set_color(color)
+            self.update_node(next_node)
 
 
     def choose_color_from_available_colors(self, available_colors: List[int]) -> int:
