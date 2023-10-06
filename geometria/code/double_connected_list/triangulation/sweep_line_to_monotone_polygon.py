@@ -31,7 +31,7 @@ class SweepLineMonotonePoly:
                 segments: list of segments to be processed.
         """
 
-        self.semiedges = deepcopy(semiedges)
+        self.semiedges = semiedges#deepcopy(semiedges)
         self.epsilon  = epsilon
         self.status_tree : Tree[Node1D]   = None 
         self.event_points : List[Vector]  = None 

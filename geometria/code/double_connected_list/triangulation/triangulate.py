@@ -36,7 +36,7 @@ class Triangulate():
 
     def __init__(self, semiedges: SemiEdgeList):
 
-        self.semiedges: SemiEdgeList = deepcopy(semiedges)
+        self.semiedges: SemiEdgeList = semiedges#deepcopy(semiedges)
         self.vertex_stack: List[Tuple[GeometricNode, SemiEdge]] = []
         self.curr_iter: int = 0
         self.endpoints: List[Tuple[GeometricNode, SemiEdge]] = []
@@ -86,7 +86,7 @@ class Triangulate():
                 A list of tuples, where each tuple contains the endpoint, the semiedge that contains the endpoint as 
                 origin, and the type of endpoint.
         """
-        semiedges_ = deepcopy(semiedges)
+        semiedges_ = semiedges#deepcopy(semiedges)
         endpoints = []
 
         for i in range(len(semiedges_)):
