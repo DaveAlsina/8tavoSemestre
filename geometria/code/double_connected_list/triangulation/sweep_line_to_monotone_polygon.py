@@ -468,7 +468,7 @@ class SweepLineMonotonePoly:
 
         # we sort the endpoints
         self.event_points = self.sort_and_classify_endpoints()
-        self.event_points_copy = deepcopy(self.event_points)
+        self.event_points_copy = self.event_points#deepcopy(self.event_points)
 
         # used for delimitation of the sweepline width in the x axis
         self.leftmost_endpoint  = Vector.get_leftmost_point([v for v, s, t in self.event_points])
