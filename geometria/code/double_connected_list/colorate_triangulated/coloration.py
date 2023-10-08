@@ -50,12 +50,13 @@ class TriangulationColoring:
                 color = self.choose_color_from_available_colors(available_colors)
                 #if there are available colors, then color the node
                 if color is not None:
-                    node.set_color(color)
-                    self.update_node(node)
 
-                    #update the queue by going from the node that has the least incident edges
-                    #to the node that has the most incident edges
-                    #nodes = self.update_queue(True)
+                    #color the node
+                    node.set_color(color)
+                    #increase the color count
+                    self.color_count[color] += 1
+                    #update the node
+                    self.update_node(node)
                 
                 #if there are no available colors, then raise an exception
                 else:
@@ -66,10 +67,13 @@ class TriangulationColoring:
                     
                     #leave the node uncolored for later coloring
                     nodes.append(node)
+
+                    #reinsert the neighboring nodes in the queue
                     for neighboring_node in self.get_neighboring_nodes(node):
                         nodes.append(neighboring_node)
 
             print(f"Node {node} is colored with color {node.color}. color = {color}")
+            print(f"color_count = {self.color_count}")
             print()
 
             #plot the current state
@@ -128,7 +132,15 @@ class TriangulationColoring:
 
         #erase the color of the node in each incident edge
         for incident_edge in incident_edges:
+            
+            #erase the color of the node
+            if incident_edge.next_.color is not None:
+                self.color_count[incident_edge.next_.color] -= 1
+
+            #erase the color of the node
             incident_edge.next_.set_color(None)
+
+            #update the node
             self.update_node(incident_edge.next_)
 
         #build a queue of the next nodes of the incident edges
@@ -184,11 +196,8 @@ class TriangulationColoring:
             #build a sub-dictionary that contains only the available colors
             available_color_count = dict([(color, self.color_count[color]) for color in available_colors])
 
-            #find the color that is used the least
+            #find the color that is used the most
             color = max(available_color_count, key=available_color_count.get)
-
-            #increase the color count
-            self.color_count[color] += 1
 
             return color
                     
@@ -262,6 +271,27 @@ class TriangulationColoring:
         for node in self.semiedges.list_of_nodes:
             
             if node.color is not None:
+                color = main_colors[node.color]
+                plt.scatter(node.x, node.y, color=color, s=40)
+
+        plt.show()
+
+    def plot_final_result(self, cmap = 'viridis'):
+        PlotDoubleConnectedEdgeList.plot(self.semiedges)
+
+        colormap = mpl.colormaps[cmap].resampled(50)
+        main_colors = [colormap(0.33), colormap(0.66), colormap(0.99)]
+
+        #find the least used color
+        least_used_color = min(self.color_count, key=self.color_count.get)
+
+        #plot only the nodes that are colored with the least used color
+        #from the self.color_count dictionary
+
+        #plot the colors of the nodes
+        for node in self.semiedges.list_of_nodes:
+            
+            if node.color == least_used_color:
                 color = main_colors[node.color]
                 plt.scatter(node.x, node.y, color=color, s=40)
 
