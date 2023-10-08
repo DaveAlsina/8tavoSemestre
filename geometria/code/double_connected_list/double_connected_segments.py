@@ -422,6 +422,31 @@ class SemiEdgeList():
 
         return starts_at_vertex
 
+    def resync(self) -> None:
+        """this function resyncs the list of nodes and semi-edges, 
+           this is necessary when we deal with copies of the nodes and maybe two 
+           semiedges share an end but they are not the same object"""
+        
+        #get the list of nodes
+        self.list_of_nodes = [semiedge.origin for semiedge in self.semi_edges]
+        
+        #drop the repeated nodes
+        self.list_of_nodes = list(set(self.list_of_nodes))
+
+        #for each incident edge of each node we set the origin and next vertex
+        #to the node that is in the list of nodes
+
+        for node in self.list_of_nodes:
+            incident_edges = self.get_incident_edges_of_vertex(node)
+
+            for incident_edge in incident_edges:
+                incident_edge.origin = node
+
+            for incident_edge in incident_edges:
+                #seach the incident_edge.next_ in the list of nodes
+                idx = self.list_of_nodes.index(incident_edge.next_)
+                incident_edge.next_ = self.list_of_nodes[idx]
+
 
     def __getitem__(self, index: int) -> SemiEdge:
         return self.semi_edges[index]

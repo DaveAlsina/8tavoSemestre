@@ -26,6 +26,8 @@ class TriangulationColoring:
         self.color_count = dict([(color, 0) for color in self.all_colors])
 
         self.handling_problematic_node = False
+        self.semiedges.resync()
+
 
     def breadth_first_search(self):
 
@@ -53,7 +55,7 @@ class TriangulationColoring:
 
                     #update the queue by going from the node that has the least incident edges
                     #to the node that has the most incident edges
-                    nodes = self.update_queue(True)
+                    #nodes = self.update_queue(True)
                 
                 #if there are no available colors, then raise an exception
                 else:
@@ -61,6 +63,11 @@ class TriangulationColoring:
                     print(f"\nThere are no available colors for coloring the node {node}.")
                     self.handle_problematic_node(node)
                     self.update_node(node)
+                    
+                    #leave the node uncolored for later coloring
+                    nodes.append(node)
+                    for neighboring_node in self.get_neighboring_nodes(node):
+                        nodes.append(neighboring_node)
 
             print(f"Node {node} is colored with color {node.color}. color = {color}")
             print()
@@ -90,11 +97,29 @@ class TriangulationColoring:
         #get the nodes that are not colored
         uncolored_nodes = [node for node in self.semiedges.list_of_nodes if node.color is None]
 
+        #drop duplicate nodes
+        uncolored_nodes = list(set(uncolored_nodes))
+
         #sort the nodes by the number of incident edges
         uncolored_nodes.sort(key=lambda x: len(self.semiedges.get_incident_edges_of_vertex(x)), reverse=sorting_type)
 
         #update the queue
         return uncolored_nodes
+
+    def get_neighboring_nodes(self, node: GeometricNode) -> List[GeometricNode]:
+        """
+            This method returns the neighboring nodes of the given node.
+            The neighboring nodes are the nodes that are connected to the given node
+            with an incident edge.
+        """
+
+        #get the incident edges of the node
+        incident_edges = self.semiedges.get_incident_edges_of_vertex(node)
+
+        #get the neighboring nodes
+        neighboring_nodes = [incident_edge.next_ for incident_edge in incident_edges]
+        return neighboring_nodes
+
 
     def handle_problematic_node(self, node: GeometricNode) -> None:
 
@@ -107,12 +132,13 @@ class TriangulationColoring:
             self.update_node(incident_edge.next_)
 
         #build a queue of the next nodes of the incident edges
-        queue = [incident_edge.next_ for incident_edge in incident_edges]
+        #queue = [incident_edge.next_ for incident_edge in incident_edges]
 
         #sort the queue by the number of incident edges
-        queue.sort(key=lambda x: len(self.semiedges.get_incident_edges_of_vertex(x)), reverse=True)
+        #queue.sort(key=lambda x: len(self.semiedges.get_incident_edges_of_vertex(x)), reverse=True)
 
         #color each node in the queue with the first available color
+        """
         while queue:
             next_node = queue.pop(0)
 
@@ -121,7 +147,7 @@ class TriangulationColoring:
 
             next_node.set_color(color)
             self.update_node(next_node)
-
+        """
 
     def choose_color_from_available_colors(self, available_colors: List[int]) -> int:
         """
