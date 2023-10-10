@@ -1,4 +1,4 @@
-function gaussian_elimination_step(row1:: Vector{Float64}, row2::Vector{Float64}, output_vector::Vector{Float64}, pivot::Int)
+function gaussian_elimination_step(row1:: Vector{Float64}, row2::Vector{Float64}, output_vector::Float64, pivot::Int)
     """
         Performs a step of the full pivoting Gaussian elimination method
         on the system of equations represented by the rows row1 and row2.
@@ -46,9 +46,9 @@ function gaussian_elimination(system_matrix::Matrix, vector::Vector{Float64})
     n = length(vector)
 
     for i = 1:n-1
-        #elimination 
+        # Elimination 
         for j = i+1:n
-            updated_matrix, updated_vector = gaussian_elimination_step(system_matrix[i,i:n], system_matrix[j,i:n], vector[j], i)
+            updated_matrix, updated_vector = gaussian_elimination_step(system_matrix[i,i:n], system_matrix[j,i:n], vector[j], j)
             system_matrix[j,i:n] = updated_matrix
             vector[j] = updated_vector
         end
