@@ -1,4 +1,56 @@
-function gaussian_elimination_step(row1:: Vector{Float64}, row2::Vector{Float64}, output_vector::Float64, pivot::Int)
+"""
+n = size(a);
+    n = n(1);
+    x = zeros(n,1);
+    if strcmp(metodo, 'gaussiana')
+        for i = 1:n
+            for j = i+1:n
+                m = a(j,i)/(a(i,i));
+                a(j,:) = a(j,:) - m*a(i,:);
+                b(j,:) = b(j,:) - m*b(i,:);
+            end
+        end
+    elseif strcmp(metodo, 'parcial')
+        for i = 1:n
+            [M, ind] = max(abs(a(i:end,i)));
+            ind = ind+i-1;
+            a([i,ind],:) = a([ind,i],:);
+            b([i,ind],:) = b([ind,i],:);
+            for j = i+1:n
+                m = a(j,i)/(a(i,i));
+                a(j,:) = a(j,:) - m*a(i,:);
+                b(j,:) = b(j,:) - m*b(i,:);
+            end
+        end
+    elseif strcmp(metodo, 'escalado')
+        S = max(abs(a), [], 2);
+        for i = 1:n
+            [M, ind] = max(abs(a(i:end,i))./abs(S(i:end)));
+            ind = ind+i-1;
+            a([i,ind],:) = a([ind,i],:);
+            b([i,ind],:) = b([ind,i],:);
+            S([i,ind],:) = S([ind,i],:);
+            for j = i+1:n
+                m = a(j,i)/(a(i,i));
+                a(j,:) = a(j,:) - m*a(i,:);
+                b(j,:) = b(j,:) - m*b(i,:);
+            end
+        end
+    end
+    for i = n:-1:1
+        num = b(i);
+        for j = i+1:n
+            num = num - a(i,j)*x(j);
+        end
+        x(i) = num/a(i,i);
+    end
+end
+
+"""
+
+
+
+function gaussian_elimination_step(system_matrix:: Matrix, vec::Vector{Float64}, i::Integer, j::Integer)
     """
         Performs a step of the full pivoting Gaussian elimination method
         on the system of equations represented by the rows row1 and row2.
@@ -6,20 +58,28 @@ function gaussian_elimination_step(row1:: Vector{Float64}, row2::Vector{Float64}
 
         Input:
         -------------
-        row1: Vector{Float64}
-            The first row of the system of equations
-        row2: Vector{Float64}
-            The second row of the system of equations
-        pivot: Int
-            The index of the second row that is being eliminated
-        
+            system_matrix: Matrix
+                The matrix representing the system of equations
+            vector: Vector{Float64}
+                The vector representing the system of equations
+            i: Integer
+                The row index of the pivot element
+            j: Integer
+                The row index of the element to be eliminated
+
         Output:
         -------------
-        result: new row after the elimination step.
-        new_vector: new vector after the elimination step.
+            system_matrix: new matrix after the elimination step.
+            vector: new vector after the elimination step.
     """
-    factor = (row2[pivot][pivot-1]/row2[pivot-1][pivot-1])
-    return (row2 - ((factor).*row1)), (output_vector - ((factor).*output_vector))
+    #m = a(j,i)/(a(i,i));
+    factor = (system_matrix[j,i]/system_matrix[i,i])
+    
+    #elimination step
+    system_matrix[j,:] = system_matrix[j,:] - factor*system_matrix[i,:]
+    vec[j] = vec[j] - factor*vec[i]
+
+    return system_matrix, vec
 end
 
 function gaussian_elimination(system_matrix::Matrix, vector::Vector{Float64})
@@ -48,9 +108,7 @@ function gaussian_elimination(system_matrix::Matrix, vector::Vector{Float64})
     for i = 1:n-1
         # Elimination 
         for j = i+1:n
-            updated_matrix, updated_vector = gaussian_elimination_step(system_matrix[i,i:n], system_matrix[j,i:n], vector[j], j)
-            system_matrix[j,i:n] = updated_matrix
-            vector[j] = updated_vector
+            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, i, j)
         end
     end
 end
@@ -59,27 +117,66 @@ end
 function partial_pivoting(system_matrix::Matrix, vector::Vector)
     n = length(vector)
 
-    for k = 1:n-1
+    for i = 1:n-1
         # Find the maximum value in the k-th column
-        max_value = abs(system_matrix[k,k])
-        max_value, max_row = findmax(abs.(system_matrix[k:n,k]))
+        max_value = abs(system_matrix[i,i])
+        max_value, max_row = findmax(abs.(system_matrix[i:n,i]))
 
         # Swap the rows
-        if max_row != k
-            system_matrix[[k, max_row],:] = system_matrix[[max_row, k],:]
-            vector[[k, max_row]] = vector[[max_row,k]]
+        if max_row != i
+            system_matrix[[i, max_row],:] = system_matrix[[max_row, i],:]
+            vector[[i, max_row]] = vector[[max_row,i]]
         end
 
         # Elimination
-        for i = k+1:n
-            factor = system_matrix[i,k]/system_matrix[k,k]
-            system_matrix[i,k] = 0
-            for j = k+1:n
-                system_matrix[i,j] = system_matrix[i,j] - factor*system_matrix[k,j]
-            end
-            vector[i] = vector[i] - factor*vector[k]
+        for j = i+1:n
+            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, k, j)
         end
 
     end
+
     return system_matrix, vector
+end
+
+function scaled_partial_pivoting(system_matrix::Matrix, vector::Vector)
+    n = length(vector)
+
+    # Find the scaling factors
+    scaling_factors = maximum(abs.(system_matrix), dims=2)
+
+    for i = 1:n-1
+        # Find the maximum value in the k-th column
+        max_value = abs(system_matrix[i,i])/scaling_factors[i]
+        max_value, max_row = findmax(abs.(system_matrix[i:n,i])/scaling_factors[i:n])
+
+        # Swap the rows
+        if max_row != i
+            system_matrix[[i, max_row],:] = system_matrix[[max_row, i],:]
+            vector[[i, max_row]] = vector[[max_row,i]]
+        end
+
+        # Elimination
+        for j = i+1:n
+            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, k, j)
+        end
+
+    end
+
+    return system_matrix, vector
+end
+
+function direct_matrix_solution(system_matrix::Matrix, vector::Vector{Float64}; type::String)
+
+    if type == "gaussian"
+        system_matrix, vector = gaussian_elimination(system_matrix, vector)
+
+    elseif type == "partial pivoting"
+        system_matrix, vector = partial_pivoting(system_matrix, vector)
+
+    elseif type == "scaled partial pivoting"
+        system_matrix, vector = scaled_partial_pivoting(system_matrix, vector)
+    else
+        error("Invalid method, available methods are: gaussian, partial pivoting, scaled partial pivoting")
+    end
+
 end
