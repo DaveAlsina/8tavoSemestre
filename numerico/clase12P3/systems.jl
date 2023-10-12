@@ -111,6 +111,8 @@ function gaussian_elimination(system_matrix::Matrix, vector::Vector{Float64})
             system_matrix, vector = gaussian_elimination_step(system_matrix, vector, i, j)
         end
     end
+
+    return system_matrix, vector
 end
 
 
@@ -118,8 +120,7 @@ function partial_pivoting(system_matrix::Matrix, vector::Vector)
     n = length(vector)
 
     for i = 1:n-1
-        # Find the maximum value in the k-th column
-        max_value = abs(system_matrix[i,i])
+        # Find the maximum value in the i-th column
         max_value, max_row = findmax(abs.(system_matrix[i:n,i]))
 
         # Swap the rows
@@ -130,7 +131,7 @@ function partial_pivoting(system_matrix::Matrix, vector::Vector)
 
         # Elimination
         for j = i+1:n
-            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, k, j)
+            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, i, j)
         end
 
     end
@@ -143,21 +144,22 @@ function scaled_partial_pivoting(system_matrix::Matrix, vector::Vector)
 
     # Find the scaling factors
     scaling_factors = maximum(abs.(system_matrix), dims=2)
+    println("scaling_factors = ", scaling_factors)
 
     for i = 1:n-1
         # Find the maximum value in the k-th column
-        max_value = abs(system_matrix[i,i])/scaling_factors[i]
-        max_value, max_row = findmax(abs.(system_matrix[i:n,i])/scaling_factors[i:n])
+        max_value, max_row = findmax(abs.(system_matrix[i:n,i])./scaling_factors[i:n])
 
         # Swap the rows
         if max_row != i
             system_matrix[[i, max_row],:] = system_matrix[[max_row, i],:]
             vector[[i, max_row]] = vector[[max_row,i]]
+            scaling_factors[[i, max_row]] = scaling_factors[[max_row,i]]
         end
 
         # Elimination
         for j = i+1:n
-            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, k, j)
+            system_matrix, vector = gaussian_elimination_step(system_matrix, vector, i, j)
         end
 
     end
@@ -167,13 +169,16 @@ end
 
 function direct_matrix_solution(system_matrix::Matrix, vector::Vector{Float64}; type::String)
 
-    if type == "gaussian"
+    system_matrix = deepcopy(system_matrix)
+    vector = deepcopy(vector)
+
+    if type == "gaussian_elimination"
         system_matrix, vector = gaussian_elimination(system_matrix, vector)
 
-    elseif type == "partial pivoting"
+    elseif type == "partial_pivoting"
         system_matrix, vector = partial_pivoting(system_matrix, vector)
 
-    elseif type == "scaled partial pivoting"
+    elseif type == "scaled_partial_pivoting"
         system_matrix, vector = scaled_partial_pivoting(system_matrix, vector)
     else
         error("Invalid method, available methods are: gaussian, partial pivoting, scaled partial pivoting")
