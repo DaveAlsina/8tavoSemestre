@@ -1,55 +1,3 @@
-"""
-n = size(a);
-    n = n(1);
-    x = zeros(n,1);
-    if strcmp(metodo, 'gaussiana')
-        for i = 1:n
-            for j = i+1:n
-                m = a(j,i)/(a(i,i));
-                a(j,:) = a(j,:) - m*a(i,:);
-                b(j,:) = b(j,:) - m*b(i,:);
-            end
-        end
-    elseif strcmp(metodo, 'parcial')
-        for i = 1:n
-            [M, ind] = max(abs(a(i:end,i)));
-            ind = ind+i-1;
-            a([i,ind],:) = a([ind,i],:);
-            b([i,ind],:) = b([ind,i],:);
-            for j = i+1:n
-                m = a(j,i)/(a(i,i));
-                a(j,:) = a(j,:) - m*a(i,:);
-                b(j,:) = b(j,:) - m*b(i,:);
-            end
-        end
-    elseif strcmp(metodo, 'escalado')
-        S = max(abs(a), [], 2);
-        for i = 1:n
-            [M, ind] = max(abs(a(i:end,i))./abs(S(i:end)));
-            ind = ind+i-1;
-            a([i,ind],:) = a([ind,i],:);
-            b([i,ind],:) = b([ind,i],:);
-            S([i,ind],:) = S([ind,i],:);
-            for j = i+1:n
-                m = a(j,i)/(a(i,i));
-                a(j,:) = a(j,:) - m*a(i,:);
-                b(j,:) = b(j,:) - m*b(i,:);
-            end
-        end
-    end
-    for i = n:-1:1
-        num = b(i);
-        for j = i+1:n
-            num = num - a(i,j)*x(j);
-        end
-        x(i) = num/a(i,i);
-    end
-end
-
-"""
-
-
-
 function gaussian_elimination_step(system_matrix:: Matrix, vec::Vector{Float64}, i::Integer, j::Integer)
     """
         Performs a step of the full pivoting Gaussian elimination method
@@ -183,5 +131,19 @@ function direct_matrix_solution(system_matrix::Matrix, vector::Vector{Float64}; 
     else
         error("Invalid method, available methods are: gaussian, partial pivoting, scaled partial pivoting")
     end
+
+    # Back substitution
+    n = length(vector)
+    x = zeros(n,1)
+
+    for i = n:-1:1
+        num = vector[i]
+        for j = i+1:n
+            num = num - system_matrix[i,j]*x[j]
+        end
+        x[i] = num/system_matrix[i,i]
+    end
+
+    return system_matrix, vector, x
 
 end
