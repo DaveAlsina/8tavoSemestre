@@ -103,6 +103,30 @@ function power_regression(points::Vector)
     return (exp(a0), a1)
 end
 
+function growth_rate_regression(points::Vector)
+
+    """
+        Linearize the growth rate regression and then apply linear regression.
+
+        Input:
+        --------
+            points: Vector of tuples (x, y) representing the points
+            of the sample.
+        
+        Output:
+        --------
+            a0: Intercept of the linear regression.
+            a1: Slope of the linear regression.
+    """
+
+    points = deepcopy(points)
+    points = [(1/p[1], 1/p[2]) for p in points]
+
+    (a0, a1) = linear_regression(points)
+
+    return (1/a0, a1/a0)
+end
+
 
 #------------------------------------------------------------
 #     Functions to calculate the polynomial regression
@@ -183,6 +207,23 @@ function build_pow_fn(a0::Float64, a1::Float64)
     """
 
     fn = (x) -> a0*(x^a1)
+    return fn
+end
+
+function build_growth_rate_fn(a0::Float64, a1::Float64)
+
+    """
+        Input:
+        --------
+            a0: Intercept of the linear regression.
+            a1: Slope of the linear regression.
+
+        Output:
+        --------
+            fn: Function representing the growth rate regression.
+    """
+
+    fn = (x) -> a0*(x/(a1 + x))
     return fn
 end
 
