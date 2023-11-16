@@ -29,7 +29,10 @@ function error_metric(xaprox::Float64, xtarget::Float64, is_absolute::Bool)
     
 end
 
-function error_metric_vectorial(aprox::Vector, target::Vector, is_absolute::Bool)
+function error_metric_vectorial(aprox::Vector,
+                                target::Vector,
+                                is_absolute::Bool;
+                                type = 2)
     
     """
         This function calculates the error between the aproximation and the real value
@@ -47,9 +50,9 @@ function error_metric_vectorial(aprox::Vector, target::Vector, is_absolute::Bool
     """
     
     if is_absolute
-        return norm(target - aprox) 
+        return norm(target - aprox, type)
     else
-        return norm(target - aprox)/norm(target)
+        return norm(target - aprox, type)/norm(target, type)
     end
     
 end

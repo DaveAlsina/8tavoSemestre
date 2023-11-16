@@ -1,4 +1,5 @@
 include("error_metrics.jl")
+include("norms.jl")
 
 function decompose_matrix(A::Matrix)
 
@@ -33,14 +34,22 @@ function jacobi(A::Matrix,
                 b::Vector,
                 x::Vector,
                 tol::Float64;
-                is_absolute::Bool = true, 
+                is_absolute:: Bool = true,
+                norm::String = "euclidian",
                 max_iters::Int64 = Integer(1e6))
 
-    """
-        Calculates the solution of the linear system Ax = b using the Jacobi method.
-    """
-
     D, L, U = decompose_matrix(A)
+
+    if norm == "euclidian"
+        norm_ = 2
+    elseif norm == "infinite"
+        norm_ = Inf
+    else
+        print("The norm is not valid")
+        return
+    end
+
+    #print("D = ", D)
 
     #calculate the inverse of D
     D_inv = inv(D)
@@ -60,7 +69,7 @@ function jacobi(A::Matrix,
     while true
         x = T * x + c
 
-        if error_metric_vectorial(x, x_old, is_absolute) < tol
+        if error_metric_vectorial(x, x_old, is_absolute, type = norm_)  < tol
             break
         end
 
@@ -73,20 +82,29 @@ function jacobi(A::Matrix,
         iters += 1
     end
 
-    return x
+    return x   
 end
 
 function gauss_siedel(A::Matrix,
                       b::Vector,
                       x::Vector,
                       tol::Float64;
-                      is_absolute::Bool = true, 
+                      is_absolute:: Bool = true,
+                      norm::String = "euclidian",
                       max_iters::Int64 = Integer(1e6))
 
+    D, L, U = decompose_matrix(A)
 
-    """
-        Calculates the solution of the linear system Ax = b using the Gauss-Siedel method.
-    """
+    if norm == "euclidian"
+        norm_ = 2
+    elseif norm == "infinite"
+        norm_ = Inf
+    else
+        print("The norm is not valid")
+        return
+    end
+
+    #print("D - L = ", D - L)
 
     D, L, U = decompose_matrix(A)
     DL_inv = inv(D - L)
@@ -97,14 +115,14 @@ function gauss_siedel(A::Matrix,
 
     #store the old value of x
     x_old = x
-    
+
     #count the number of iterations
     iters = 0
 
     while true
         x = T * x + c
 
-        if error_metric_vectorial(x, x_old, is_absolute) < tol
+        if error_metric_vectorial(x, x_old, is_absolute, type = norm_)  < tol
             break
         end
 
@@ -112,11 +130,9 @@ function gauss_siedel(A::Matrix,
             print("The method did not converge in the given range of max iterations")
             break
         end
-
         x_old = x
         iters += 1
     end
 
     return x
 end
-
