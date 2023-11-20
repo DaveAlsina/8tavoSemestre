@@ -47,19 +47,20 @@ function determination_coefficient(fn::Function, points::Vector)
             r2: Determination coefficient.
     """
 
+    points_ = deepcopy(points)
     n = length(points)
 
     # Calculate the mean of the y values
-    ymean = sum([p[2] for p in points])/n
+    ymean = sum([p[2] for p in points_])/n
 
     # Calculate the sum of the squares of the residuals
-    ssr = sum([(p[2] - fn(p[1]))^2 for p in points])
+    ssr = sum([abs(p[2] - fn(p[1]))^2 for p in points_])
 
     # Calculate the explained sum of squares
-    ess = sum([(fn(p[1]) - ymean)^2 for p in points])
+    ess = sum([abs(fn(p[1]) - ymean)^2 for p in points_])
 
     # Calculate the sum of the squares of the total
-    sst = sum([(p[2] - ymean)^2 for p in points])
+    sst = sum([abs(p[2] - ymean)^2 for p in points_])
 
     # Calculate the determination coefficient
 

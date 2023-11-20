@@ -94,39 +94,44 @@ end
 #             Discrete trigonometric aproximation
 #------------------------------------------------------------
 
-function discrete_trigonometric_coefficients(xj, yj, degree)
+function discrete_trigonometric_coefficients(xj, yj, nterms, T)
 
     ak = []
+    ω = 2π / T
 
-    for k in 0:degree
-        sum_val = sum([yj[j]*cos(k*xj[j]) for j in 1:length(xj)])
-        sum_val *= 1/length(xj)
+    for k in 0:nterms
+        sum_val = sum([yj[j]*cos(k*xj[j]*ω) for j in 1:length(xj)])
+        sum_val *= 1/(length(xj)//2)
         push!(ak, sum_val)
     end
 
     bk = []
 
-    for k in 1:degree-1
-        sum_val = sum([yj[j]*sin(k*xj[j]) for j in 1:length(xj)])
-        sum_val *= 1/length(xj)
+    for k in 1:nterms-1
+        sum_val = sum([yj[j]*sin(k*xj[j]*ω) for j in 1:length(xj)])
+        sum_val *= 1/(length(xj)//2)
         push!(bk, sum_val)
     end
 
     return ak, bk
 end
 
-function discrete_trigonometric_approx(points, degree)
+function discrete_trigonometric_approx(points, nterms, T)
+
+    points_ = deepcopy(points)
 
     xj = [p[1] for p in points]
     yj = [p[2] for p in points]
-    ak, bk = discrete_trigonometric_coefficients(xj, yj, degree)
+    ω  = 2π / T
+
+    ak, bk = discrete_trigonometric_coefficients(xj, yj, nterms, T)
 
     @variables x
     sum_val = ak[1]/2
-    sum_val += ak[end]*cos(degree*x)
+    sum_val += ak[end]*cos(nterms*x)
 
-    for k in 1:degree-1
-        sum_val += ak[k]*cos(k*x) + bk[k]*sin(k*x)
+    for k in 1:nterms-1
+        sum_val += ak[k+1]*cos(k*x*ω) + bk[k]*sin(k*x*ω)
     end
 
     return Symbolics.build_function(sum_val, x, expression = false)
