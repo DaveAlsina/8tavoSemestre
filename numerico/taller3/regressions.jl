@@ -1,28 +1,94 @@
+include("integration.jl")
 
 #------------------------------------------------------------
 #        Functions to evaluate the regression functions
 #------------------------------------------------------------
 
-function standard_stimation_error(points::Vector, fn::Function)
+function standard_stimation_error(fn::Function, points::Vector, degree::Int)
+
     """
-        Retrieve the data dispersion of the sample around the regression function.
+        Calculate the standard estimation error of the regression function.
 
         Input:
         --------------
+            fn: Function representing the regression function.
             points: Vector of tuples (x, y) representing the points
             of the sample.
-            fn: Function representing the regression function.
+            degree: Degree of the polynomial regression.
 
         Output:
         --------------
-            syx: Standard stimation error.
+            s: Standard estimation error.
     """
-    sr = sum([(p[2] - fn(p[1]))^2 for p in points])
-    syx = sqrt(sr/(length(points) - 2))
 
-    return syx
+    n = length(points)
+
+    # Calculate the sum of the squares of the residuals
+    ssr = sum([(fn(p[1]) - p[2])^2 for p in points])
+
+    # Calculate the standard estimation error
+    s = sqrt(ssr/(n - degree + 1))
+
+    return s
 end
 
+function determination_coefficient(fn::Function, points::Vector)
+    """
+        Calculate the determination coefficient of the regression function.
+
+        Input:
+        --------------
+            fn: Function representing the regression function.
+            points: Vector of tuples (x, y) representing the points
+            of the sample.
+
+        Output:
+        --------------
+            r2: Determination coefficient.
+    """
+
+    n = length(points)
+
+    # Calculate the mean of the y values
+    ymean = sum([p[2] for p in points])/n
+
+    # Calculate the sum of the squares of the residuals
+    ssr = sum([(p[2] - fn(p[1]))^2 for p in points])
+
+    # Calculate the explained sum of squares
+    ess = sum([(fn(p[1]) - ymean)^2 for p in points])
+
+    # Calculate the sum of the squares of the total
+    sst = sum([(p[2] - ymean)^2 for p in points])
+
+    # Calculate the determination coefficient
+
+    r2 = abs((sst - ssr)/sst)
+
+    return r2
+end
+
+function correlation_coefficient(fn::Function, points::Vector)
+
+    """
+        Calculate the correlation coefficient of the regression function.
+
+        Input:
+        --------------
+            fn: Function representing the regression function.
+            points: Vector of tuples (x, y) representing the points
+            of the sample.
+
+        Output:
+        --------------
+            r: Correlation coefficient.
+    """
+
+    r2 = determination_coefficient(fn, points)
+    r = sqrt(r2)
+
+    return r
+end
 
 #------------------------------------------------------------
 #         Functions to calculate the regression coefficients

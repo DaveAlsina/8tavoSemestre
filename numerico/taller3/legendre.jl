@@ -1,5 +1,4 @@
 include("integration.jl")
-
 using Symbolics
 
 function legendre_polynomials(degree)

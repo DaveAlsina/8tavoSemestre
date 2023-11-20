@@ -1,3 +1,4 @@
+include("factorization.jl")
 include("error_metrics.jl")
 
 function decompose_matrix(A::Matrix)
@@ -134,4 +135,49 @@ function gauss_siedel(A::Matrix,
     end
 
     return x
+end
+
+function iterative_refination(A::Matrix,
+                              b::Vector,
+                              tol::Float64;
+                              is_absolute::Bool = true,
+                              norm::String = "euclidian",
+                              max_iters::Int64 = Integer(1e6),)
+    """
+        Calculates the solution of the linear system Ax = b using the iterative refination method.
+    """
+
+    if norm == "euclidian"
+        norm_ = 2
+    elseif norm == "infinite"
+        norm_ = Inf
+    else
+        print("The norm is not valid")
+        return
+    end
+    
+    M = Inverse(A)
+    x = M*b # primera aproximación    
+    r = b - A*x  # residuo
+    y = M*r # nuevo b
+    count = 0
+
+    while true
+        x = x+ y
+        r = b - A*x
+        y = M*r
+
+        if error_metric_vectorial(y, x, is_absolute, type = norm_)  < tol
+            break
+        end
+
+        if count > max_iters
+            println("The method did not converge in the given range of max iterations")
+            break
+        end
+
+        count += 1
+    end
+
+    return y
 end
