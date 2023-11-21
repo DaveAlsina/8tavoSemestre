@@ -24,8 +24,8 @@ function gaussian_elimination_step(system_matrix:: Matrix, vec::Vector{Float64},
     factor = (system_matrix[j,i]/system_matrix[i,i])
     
     #elimination step
-    system_matrix[j,:] = system_matrix[j,:] - factor*system_matrix[i,:]
-    vec[j] = vec[j] - factor*vec[i]
+    system_matrix[j,:] = system_matrix[j,:] - (factor.*system_matrix[i,:])
+    vec[j] = vec[j] - (factor.*vec[i])
 
     return system_matrix, vec
 end
@@ -53,7 +53,7 @@ function gaussian_elimination(system_matrix::Matrix, vector::Vector{Float64})
     
     n = length(vector)
 
-    for i = 1:n-1
+    for i = 1:n
         # Elimination 
         for j = i+1:n
             system_matrix, vector = gaussian_elimination_step(system_matrix, vector, i, j)
@@ -70,6 +70,12 @@ function partial_pivoting(system_matrix::Matrix, vector::Vector)
     for i = 1:n-1
         # Find the maximum value in the i-th column
         max_value, max_row = findmax(abs.(system_matrix[i:n,i]))
+
+        if max_row == 1
+            max_row = i
+        else
+            max_row = max_row + i - 1
+        end
 
         # Swap the rows
         if max_row != i
@@ -97,6 +103,12 @@ function scaled_partial_pivoting(system_matrix::Matrix, vector::Vector)
     for i = 1:n-1
         # Find the maximum value in the k-th column
         max_value, max_row = findmax(abs.(system_matrix[i:n,i])./scaling_factors[i:n])
+
+        if max_row == 1
+            max_row = i
+        else
+            max_row = max_row + i - 1
+        end
 
         # Swap the rows
         if max_row != i

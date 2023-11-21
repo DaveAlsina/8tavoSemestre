@@ -52,7 +52,7 @@ function jacobi(A::Matrix,
     #print("D = ", D)
 
     #calculate the inverse of D
-    D_inv = inv(D)
+    D_inv = Inverse(D)
 
     #calculate the matrix T
     T = D_inv * (L + U)
@@ -107,7 +107,7 @@ function gauss_siedel(A::Matrix,
     #print("D - L = ", D - L)
 
     D, L, U = decompose_matrix(A)
-    DL_inv = inv(D - L)
+    DL_inv = Inverse(D - L)
 
     #calculate the T matrix 
     T = DL_inv*U
