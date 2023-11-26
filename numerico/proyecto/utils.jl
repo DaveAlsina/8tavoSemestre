@@ -1,5 +1,6 @@
 include("factorization.jl")
 using Plots
+using LinearAlgebra
 
 function main( State::Int,
                L::Float64,
@@ -100,7 +101,8 @@ function Stationari(
     # Solve
     # ==================== #
 
-    M = Inverse(A)
+    #M = Inverse(A)
+    M = inv(A)
     sol = M*b
 
     # ==================== #
@@ -130,7 +132,6 @@ function Transitori(
     Δx = L/Nx
     Δt = t_max/Nt
     γ = alpha^2 * Δx^2
-    A = zeros(Float64, Nx, Nx)
 
     # ==================== #
     # initial conditon t = 0 
@@ -148,7 +149,7 @@ function Transitori(
     push!(solutions, a)
 
     for j in 1:Nt
-
+        A = zeros(Float64, Nx, Nx)
         for i in 2:Nx-1
             A[i, i-1]  = Δt
             A[i, i] = -2*Δt - γ - Δx^2
@@ -171,7 +172,8 @@ function Transitori(
         # Solve
         # ==================== #
 
-        M = Inverse(A)
+        #M = Inverse(A)
+        M = inv(A)
         sol = M*b
 
         points = [ ( Δx*i ,sol[i]) for i in 1:Nx ]

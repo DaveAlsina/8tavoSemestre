@@ -99,7 +99,7 @@ app.layout = html_div() do
     ]),
 
     html_center([
-        html_a("Ver código fuente", href = "https://github.com/DaveAlsina/8tavoSemestre/tree/main/numerico/proyecto", target = "_blank"),
+        html_a("Ver código fuente", href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ", target = "_blank"),
     ]),
 
     #add button to link to another url 
